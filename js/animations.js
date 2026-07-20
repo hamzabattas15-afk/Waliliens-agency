@@ -32,21 +32,6 @@ window.addEventListener('load', () => {
     return;
   }
 
-  // Pin the standalone gate intro while its doors reveal a soft, partial portal presence.
-  if (window.gsap && window.ScrollTrigger && !reducedMotion) {
-    gsap.registerPlugin(ScrollTrigger);
-    const introGate = document.querySelector('.intro-gate');
-    const doors = document.querySelector('.intro-gate__door-mask');
-    if (introGate && doors) {
-      gsap.timeline({
-        scrollTrigger: { trigger: introGate, start: 'top top', end: '+=1150', scrub: 1, pin: true, pinSpacing: true, anticipatePin: 1, invalidateOnRefresh: true }
-      }).to('.intro-gate__door-mask--left', { xPercent: -100, ease: 'none' }, 0)
-        .to('.intro-gate__door-mask--right', { xPercent: 100, ease: 'none' }, 0)
-        .to('.site-header', { autoAlpha: 1, pointerEvents: 'auto', ease: 'none' }, .78)
-        .to(introGate, { autoAlpha: 0, scale: .92, transformOrigin: '50% 50%', ease: 'none' }, .76);
-    }
-  }
-
   // Custom cursor and magnetic hero CTA.
   const cursor = document.querySelector('.cursor-dot');
   if (cursor && canHover) {
@@ -170,6 +155,11 @@ window.addEventListener('load', () => {
     .from('.preloader__wordmark, .preloader__counter', { y: 10, opacity: 0, duration: .35, stagger: .08 }, '-=.15')
     .to(counter, { value: 100, duration: 1.25, ease: 'power2.inOut', onUpdate: () => { document.querySelector('.preloader__counter span').textContent = Math.round(counter.value); } }, '-=.1')
     .to(preloader, { autoAlpha: 0, yPercent: -100, duration: .78, ease: 'power4.inOut', onComplete: () => preloader.classList.add('is-hidden') })
+    .to({}, { duration: .4 })
+    .to('.intro-gate__door-mask--left', { xPercent: -100, duration: 1.35, ease: 'power4.inOut' })
+    .to('.intro-gate__door-mask--right', { xPercent: 100, duration: 1.35, ease: 'power4.inOut' }, '<')
+    .to('.intro-gate', { autoAlpha: 0, scale: .92, duration: .8, transformOrigin: '50% 50%', ease: 'power4.inOut' })
+    .to('.site-header', { autoAlpha: 1, pointerEvents: 'auto', duration: .45, ease: 'power3.out' })
     .from('.hero__eyebrow', { y: 20, opacity: 0, duration: .55, ease: 'power3.out' }, '-=.12')
     .from('.hero-title__word', { yPercent: 115, rotate: 3, opacity: 0, duration: .85, stagger: .13, ease: 'power4.out' }, '-=.15')
     .from('.hero__copy, .hero__bottom', { y: 28, opacity: 0, duration: .7, stagger: .12, ease: 'power3.out' }, '-=.35');
