@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Waliliens is a web development and AI automation agency building digital systems that move businesses forward." />
+    <title>Waliliens — Web Development &amp; AI Automation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.1.13/lenis.min.js"></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/animations.js" defer></script>
+    <script src="js/transitions.js" defer></script>
+    <script src="js/contact.js" defer></script>
+  </head>
+  <body>
+    <div class="cursor-dot" aria-hidden="true"></div>
+    <div class="preloader" aria-label="Loading Waliliens" role="status">
+      <div class="preloader__logo">
+        <div class="preloader__ring" aria-hidden="true"></div>
+        <div class="preloader__mark">W</div>
+      </div>
+      <p class="preloader__wordmark">WALILIENS</p>
+      <p class="preloader__counter"><span>0</span>%</p>
+    </div>
+
+    <header class="site-header">
+      <nav class="navbar container" aria-label="Main navigation">
+        <a class="logo" href="#top" aria-label="Waliliens home"><span class="logo-badge"><img src="images/logo-cyan.png" alt="Waliliens" /></span></a>
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+        <div class="nav-links" id="nav-links">
+          <a href="#services">Services</a>
+          <a href="#process">Process</a>
+          <a href="#work">Work</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <a class="button button--small nav-cta" href="#contact">Start a project <span>↗</span></a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="intro-gate" id="intro-gate" aria-label="Waliliens introduction">
+        <div class="intro-gate__background" aria-hidden="true">
+          <div class="starfield"></div>
+          <div class="hero-nebula hero-nebula--violet"></div><div class="hero-nebula hero-nebula--teal"></div><div class="hero-nebula hero-nebula--blue"></div>
+          <div class="data-streams data-streams--left"><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
+          <div class="data-streams data-streams--right"><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
+          <div class="intro-gate__image" role="img" aria-label="Ancient Moroccan gate with a glowing portal"></div>
+          <div class="intro-gate__bottom-overlay" aria-hidden="true"></div>
+          <div class="intro-gate__corner-overlay" aria-hidden="true"></div>
+          <p class="intro-gate__caption">THE LANDING IS INITIATED. FROM THE HEART OF WALILI.</p>
+          <svg class="intro-circuit-overlay" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+            <path class="intro-circuit-path" d="M142 570V258l55-58h103M858 570V258l-55-58H700" />
+            <path class="intro-circuit-path intro-circuit-path--arch" d="M254 570V320c0-132 104-232 246-232s246 100 246 232v250" />
+            <path class="intro-circuit-path intro-circuit-path--side" d="M72 448h94v-72h82M928 448h-94v-72h-82" />
+          </svg>
+          <div class="intro-gate__door-mask intro-gate__door-mask--left"></div>
+          <div class="intro-gate__door-mask intro-gate__door-mask--right"></div>
+        </div>
+      </section>
+
+      <section class="hero section">
+        <div class="hero-background" aria-hidden="true">
+          <div class="starfield"></div>
+          <div class="hero-globe" aria-hidden="true">
+            <div class="hero-globe__glow"></div>
+            <div class="hero-globe__wireframe">
+              <i class="globe-latitude globe-latitude--1"></i><i class="globe-latitude globe-latitude--2"></i><i class="globe-latitude globe-latitude--3"></i><i class="globe-latitude globe-latitude--4"></i><i class="globe-latitude globe-latitude--5"></i>
+              <i class="globe-longitude globe-longitude--1"></i><i class="globe-longitude globe-longitude--2"></i><i class="globe-longitude globe-longitude--3"></i><i class="globe-longitude globe-longitude--4"></i><i class="globe-longitude globe-longitude--5"></i>
+              <div class="globe-dots"></div>
+              <svg class="globe-routes" viewBox="0 0 400 400" fill="none"><path d="M82 188Q184 94 300 164T321 280"/><path d="M104 270Q184 207 255 242T316 198"/><path d="M119 133Q175 202 221 151T302 117"/><path d="M72 231Q164 300 251 292T335 246"/></svg>
+            </div>
+            <i class="globe-orbit"></i>
+          </div>
+        </div>
+        <div class="hero__content">
+          <div class="hero__eyebrow"><span class="pulse"></span> Digital agency for ambitious teams</div>
+          <h1 class="hero-title" aria-label="Digital worlds. Intelligent systems.">
+            <span class="hero-title__line" aria-hidden="true"><span class="hero-title__word">Digital</span> <span class="hero-title__word">worlds.</span></span>
+            <span class="hero-title__line hero-title__line--accent" aria-hidden="true"><span class="hero-title__word"><em>Intelligent</em></span> <span class="hero-title__word">systems.</span></span>
+          </h1>
+          <div class="hero__copy">
+            <p>We blend standout web experiences with AI automation that gives your team more room to do its best work.</p>
+            <a class="button" href="#contact">Let's build together <span>↗</span></a>
+          </div>
+        </div>
+        <div class="hero__bottom">
+          <p>Web Development<br />AI Automation<br />Digital Strategy</p>
+          <a class="scroll-hint" href="#services">Scroll to explore <span>↓</span></a>
+          <p class="hero__location">Built remotely,<br />working globally.</p>
+        </div>
+      </section>
+
+      <section class="services section" id="services">
+        <div class="container">
+          <div class="section-heading"><p class="eyebrow">01 / What we do</p><h2>Crafted to connect.<br />Built to <em>perform.</em></h2></div>
+          <div class="service-grid">
+            <article class="service-card"><div class="service-card__number">01</div><div><span class="service-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M7 55h50M12 55l4-9h32l4 9M21 46V17h22v29M15 17h34l-4-6H19l-4 6M11 11h42L49 5H15l-4 6M7 29l-5 5 5 5M57 29l5 5-5 5"/><path class="icon-circuit" d="M26 28h12M32 22v20M16 38h8M40 38h8"/></svg></span><h3>Web Development</h3><p>High-performing, expressive websites that make every interaction feel considered.</p><ul><li>Creative websites &amp; e-commerce</li><li>UX/UI design systems</li><li>Webflow &amp; custom builds</li></ul></div><a href="#contact" aria-label="Discuss web development"><svg class="service-arrow" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M6 22 22 6M10 6h12v12"/></svg></a></article>
+            <article class="service-card service-card--blue"><div class="service-card__number">02</div><div><span class="service-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="22"/><circle cx="32" cy="32" r="15"/><path d="M10 32h12l5-8 8 8 7-11 12 11M32 10v10M32 44v10M10 19l9 5M54 19l-9 5"/><circle class="icon-node" cx="27" cy="24" r="2"/><circle class="icon-node" cx="35" cy="32" r="2"/><circle class="icon-node" cx="42" cy="21" r="2"/></svg></span><h3>AI Automation</h3><p>Smart workflows that remove the repetitive work and keep your business in motion.</p><ul><li>AI agents &amp; assistants</li><li>Workflow automation</li><li>Data &amp; CRM integrations</li></ul></div><a href="#contact" aria-label="Discuss AI automation"><svg class="service-arrow" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M6 22 22 6M10 6h12v12"/></svg></a></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="process section" id="process">
+        <div class="container process__grid">
+          <div class="process__intro"><p class="eyebrow">02 / Our approach</p><h2>Less noise.<br />More <em>momentum.</em></h2><p>Good work begins with clarity. We partner closely with your team from the first idea to a launch worth sharing.</p></div>
+          <div class="steps">
+            <article><span>01</span><svg class="process-icon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M4 31h32M8 31l3-7h18l3 7M14 24V12h12v12M10 12h20l-3-5H13l-3 5"/><path class="icon-circuit" d="M20 15v7M16 19h8"/></svg><h3>Discover</h3><p>We get to the real opportunity behind the brief.</p></article>
+            <article><span>02</span><svg class="process-icon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M6 31V9h28v22H6Z"/><path d="M12 25l5-6 5 3 6-8"/><path class="icon-circuit" d="M10 13h7M23 13h7"/></svg><h3>Design</h3><p>We shape a focused experience and a system to support it.</p></article>
+            <article><span>03</span><svg class="process-icon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M8 31h24M12 31V13h16v18M9 13h22l-3-5H12l-3 5"/><path class="icon-circuit" d="M16 18h8M16 23h8"/></svg><h3>Build</h3><p>We bring it to life with craft, care, and clean technology.</p></article>
+            <article><span>04</span><svg class="process-icon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="13"/><path d="M20 7v6M20 27v6M7 20h6M27 20h6M13 27l14-14"/><circle class="icon-node" cx="27" cy="13" r="2"/></svg><h3>Grow</h3><p>We learn, iterate, and create more room for progress.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="work section" id="work">
+        <div class="container"><div class="section-heading section-heading--inline"><div><p class="eyebrow">03 / Selected work</p><h2>Made for the<br /><em>next move.</em></h2></div><a class="text-link" href="#contact">View all projects <span>↗</span></a></div>
+          <div class="work-grid">
+            <article class="project project--large"><div class="project__visual visual--nova"><span>nova</span><i></i></div><div class="project__meta"><h3>Nova Finance</h3><p>Brand platform · Web development</p></div></article>
+            <article class="project"><div class="project__visual visual--motion"><span>Motion</span><b>↗</b></div><div class="project__meta"><h3>Motion Studio</h3><p>Creative direction · Portfolio</p></div></article>
+            <article class="project"><div class="project__visual visual--flow"><span>flow</span><i>AI</i></div><div class="project__meta"><h3>Flow Operations</h3><p>AI automation · Product design</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact section" id="contact">
+        <div class="container contact__grid"><div><p class="eyebrow">04 / Start a conversation</p><h2>Have a bright<br />idea? <em>Let's talk.</em></h2><p>Tell us a little about what you're building. We’ll get back to you within two working days.</p><a class="contact-email" href="mailto:hello@waliliens.com">hello@waliliens.com <span>↗</span></a></div>
+          <form class="contact-form" id="contact-form">
+            <div class="form-field"><input id="contact-name" type="text" name="name" placeholder=" " required /><label for="contact-name">Your name</label></div>
+            <div class="form-field"><input id="contact-email" type="email" name="email" placeholder=" " required /><label for="contact-email">Email address</label></div>
+            <div class="form-field form-field--select"><select id="contact-project" name="projectType" required><option value="" selected disabled></option><option value="web-development">Web Dev</option><option value="ai-automation">AI Automation</option><option value="both">Both</option></select><label for="contact-project">Project type</label></div>
+            <div class="form-field form-field--message"><textarea id="contact-message" name="message" placeholder=" " required></textarea><label for="contact-message">Tell us about your project</label></div>
+            <button class="button contact-submit" type="submit"><span class="button__label">Send inquiry</span><span class="button__arrow">↗</span><span class="button__spinner" aria-hidden="true"></span><span class="button__success" aria-hidden="true">✓</span></button>
+            <p class="form-message" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"><div class="container footer__top"><a class="logo" href="#top" aria-label="Waliliens home"><span class="logo-badge"><img src="images/logo-cyan.png" alt="Waliliens" /></span></a><p>Web development &amp; AI automation<br />for businesses with a future in mind.</p><div class="footer-socials"><a href="#services" aria-label="Instagram"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="5" y="5" width="22" height="22" rx="6"/><circle cx="16" cy="16" r="5"/><circle cx="23" cy="9" r="1"/></svg></a><a href="#services" aria-label="LinkedIn"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M7 12v13M7 7v1M13 25V12M13 18c0-4 12-6 12 2v5M13 17c2-6 12-6 12 2"/></svg></a><a href="#services" aria-label="Behance"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M6 7h10a5 5 0 0 1 0 10H6V7ZM6 17h11a5 5 0 0 1 0 10H6V17ZM20 11h7M20 21h7M20 17h7"/></svg></a></div></div><div class="container footer__bottom"><p>© 2025 Waliliens. All rights reserved.</p><a href="#top">Back to top ↑</a></div></footer>
+  </body>
+</html>
