@@ -85,7 +85,8 @@ h1,h2,h3,.logo { font-family:"Space Grotesk",sans-serif; line-height:1.03; lette
 @media (max-width:768px) { .hero { height:100vh; min-height:100vh; padding:0 20px 24px; }.hero__content { width:100%; padding-top:112px; }.hero h1 { max-width:95%; margin-left:0; font-size:clamp(46px,12vw,74px); }.hero__copy { margin-top:28px; }.data-streams { width:42vw; min-width:150px; opacity:.35; transform:scale(.7); }.data-streams--left { left:-5%; }.data-streams--right { right:-5%; transform:scaleX(-1) scale(.7); } }
 
 /* Full-screen gate introduction; the content hero follows as a separate scene. */
-.intro-gate { position:relative; z-index:1; width:100vw; height:100vh; min-height:100vh; overflow:hidden; isolation:isolate; background:linear-gradient(180deg,#070a1c 0%,#0b1025 48%,#070811 100%); }
+.intro-gate { position:fixed; inset:0; z-index:50; width:100vw; height:100vh; min-height:100vh; overflow:hidden; isolation:isolate; background:linear-gradient(180deg,#070a1c 0%,#0b1025 48%,#070811 100%); }
+.intro-gate.is-hidden { display:none; }
 body:has(.intro-gate) .site-header { opacity:0; pointer-events:none; }
 .intro-gate::before { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; background:radial-gradient(ellipse at 50% 54%,rgba(94,234,212,.08),transparent 40%),linear-gradient(180deg,rgba(7,8,17,.15),rgba(7,8,17,.5)); }
 .intro-gate__background { position:absolute; inset:0; overflow:hidden; pointer-events:none; }

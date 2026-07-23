@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!link || link.target === '_blank' || link.hasAttribute('download')) return false;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
     const url = new URL(link.href, window.location.href);
+    if (url.pathname === window.location.pathname && url.hash) return false;
     return url.origin === window.location.origin && /\.html$/i.test(url.pathname) && url.href !== window.location.href;
   };
 

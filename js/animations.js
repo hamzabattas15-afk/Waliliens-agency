@@ -158,7 +158,17 @@ window.addEventListener('load', () => {
     .to({}, { duration: .4 })
     .to('.intro-gate__door-mask--left', { xPercent: -100, duration: 1.35, ease: 'power4.inOut' })
     .to('.intro-gate__door-mask--right', { xPercent: 100, duration: 1.35, ease: 'power4.inOut' }, '<')
-    .to('.intro-gate', { autoAlpha: 0, scale: .92, duration: .8, transformOrigin: '50% 50%', ease: 'power4.inOut' })
+    .to('.intro-gate', {
+      autoAlpha: 0,
+      scale: .92,
+      duration: .8,
+      transformOrigin: '50% 50%',
+      ease: 'power4.inOut',
+      onComplete: () => {
+        document.querySelector('.intro-gate')?.classList.add('is-hidden');
+        ScrollTrigger.refresh();
+      }
+    })
     .to('.site-header', { autoAlpha: 1, pointerEvents: 'auto', duration: .45, ease: 'power3.out' })
     .from('.hero__eyebrow', { y: 20, opacity: 0, duration: .55, ease: 'power3.out' }, '-=.12')
     .from('.hero-title__word', { yPercent: 115, rotate: 3, opacity: 0, duration: .85, stagger: .13, ease: 'power4.out' }, '-=.15')
