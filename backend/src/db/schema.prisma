@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
+enum ProjectType {
+  web_development
+  ai_automation
+  both
+}
+
+enum LeadStatus {
+  new
+  contacted
+  qualified
+  closed
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(VIEWER)
+  name         String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  auditLogs    AuditLog[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Lead {
+  id          String      @id @default(cuid())
+  name        String
+  email       String
+  projectType ProjectType
+  message     String      @db.Text
+  status      LeadStatus  @default(new)
+
+  // Metadata
+  ipHash      String?     // SHA-256 of IP — never store raw IPs
+  userAgent   String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  referer     String?
+
+  // Email job tracking
+  confirmationSentAt DateTime?
+  teamNotifiedAt     DateTime?
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([projectType])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  category    String
+  description String   @db.Text
+  imageUrl    String?
+  tags        String[] @default([])
+  published   Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([published, sortOrder])
+  @@map("projects")
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  userId       String
+  action       String   // e.g. "lead.status_updated", "project.created"
+  resourceType String   // e.g. "Lead", "Project"
+  resourceId   String
+  before       Json?
+  after        Json?
+  ipHash       String?
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([resourceType, resourceId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

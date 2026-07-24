@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Waliliens mark">
+  <rect width="256" height="256" rx="48" fill="#07111F"/>
+  <path d="M84 64h88c34 0 60 26 60 60 0 31-24 56-55 60l-19 2-2 19c-2 15-14 27-29 27H84V64Zm40 38v76h28c17 0 31-14 31-31 0-17-14-31-31-31h-28Z" fill="#5EEAD4"/>
+</svg>

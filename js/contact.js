@@ -1,11 +1,18 @@
-/* Replace the body of this function with your backend endpoint when ready. */
 async function submitForm(data) {
-  // Example:
-  // const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-  // if (!response.ok) throw new Error('Unable to send your inquiry.');
-  // return response.json();
-  await new Promise(resolve => setTimeout(resolve, 1200)); // Demo-only loading state.
-  return { success: true, data };
+  const response = await fetch('/api/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  const resData = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const errorMsg = resData?.error?.message || 'Unable to send your inquiry.';
+    throw new Error(errorMsg);
+  }
+
+  return resData;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,13 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
       await submitForm(data);
       button.classList.remove('is-loading');
       button.classList.add('is-success');
-      message.textContent = 'Thanks — your inquiry is on its way.';
+      message.textContent = 'Merci — votre demande est en cours d’envoi.';
       form.reset();
       window.setTimeout(() => { button.classList.remove('is-success'); button.disabled = false; }, 1800);
     } catch (error) {
       button.classList.remove('is-loading');
       button.disabled = false;
-      message.textContent = error.message || 'Something went wrong. Please try again.';
+      message.textContent = error.message || 'Une erreur est survenue. Veuillez réessayer.';
       message.classList.add('is-error');
     }
   });

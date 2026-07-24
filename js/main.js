@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle.classList.toggle('is-open', open);
     document.body.classList.toggle('menu-open', open);
     toggle.setAttribute('aria-expanded', open);
-    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    toggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
   });
   links.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
     links.classList.remove('is-open');

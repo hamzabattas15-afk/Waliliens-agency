@@ -148,31 +148,62 @@ window.addEventListener('load', () => {
 
   const preloader = document.querySelector('.preloader');
   const counter = { value: 0 };
-  const intro = gsap.timeline();
-  gsap.from('.intro-gate__caption', { y: 10, opacity: 0, duration: .9, delay: .35, ease: 'power3.out' });
-  intro
-    .from('.preloader__logo', { scale: .65, opacity: 0, duration: .55, ease: 'back.out(1.8)' })
-    .from('.preloader__wordmark, .preloader__counter', { y: 10, opacity: 0, duration: .35, stagger: .08 }, '-=.15')
-    .to(counter, { value: 100, duration: 1.25, ease: 'power2.inOut', onUpdate: () => { document.querySelector('.preloader__counter span').textContent = Math.round(counter.value); } }, '-=.1')
-    .to(preloader, { autoAlpha: 0, yPercent: -100, duration: .78, ease: 'power4.inOut', onComplete: () => preloader.classList.add('is-hidden') })
-    .to({}, { duration: .4 })
-    .to('.intro-gate__door-mask--left', { xPercent: -100, duration: 1.35, ease: 'power4.inOut' })
-    .to('.intro-gate__door-mask--right', { xPercent: 100, duration: 1.35, ease: 'power4.inOut' }, '<')
-    .to('.intro-gate', {
-      autoAlpha: 0,
-      scale: .92,
-      duration: .8,
-      transformOrigin: '50% 50%',
-      ease: 'power4.inOut',
-      onComplete: () => {
-        document.querySelector('.intro-gate')?.classList.add('is-hidden');
-        ScrollTrigger.refresh();
-      }
-    })
-    .to('.site-header', { autoAlpha: 1, pointerEvents: 'auto', duration: .45, ease: 'power3.out' })
-    .from('.hero__eyebrow', { y: 20, opacity: 0, duration: .55, ease: 'power3.out' }, '-=.12')
-    .from('.hero-title__word', { yPercent: 115, rotate: 3, opacity: 0, duration: .85, stagger: .13, ease: 'power4.out' }, '-=.15')
-    .from('.hero__copy, .hero__bottom', { y: 28, opacity: 0, duration: .7, stagger: .12, ease: 'power3.out' }, '-=.35');
+  const introGate = document.querySelector('.intro-gate');
+  const introSkipButton = document.querySelector('.intro-gate__skip');
+  let introTimeline = null;
+  let introAlreadySeen = false;
+  try {
+    introAlreadySeen = window.sessionStorage.getItem('waliliens-intro-seen') === 'true';
+  } catch (error) {
+    introAlreadySeen = false;
+  }
+  const introShouldPlay = !introAlreadySeen && !reducedMotion;
+  const finishIntro = () => {
+    try { window.sessionStorage.setItem('waliliens-intro-seen', 'true'); } catch (error) {}
+    introGate?.classList.add('is-hidden');
+    preloader?.classList.add('is-hidden');
+    document.querySelector('.site-header')?.style.setProperty('opacity', '1');
+    document.querySelector('.site-header')?.style.setProperty('pointer-events', 'auto');
+    ScrollTrigger.refresh();
+  };
+
+  if (introSkipButton) {
+    introSkipButton.addEventListener('click', () => {
+      if (introTimeline) introTimeline.kill();
+      finishIntro();
+    });
+  }
+
+  if (!introShouldPlay) {
+    if (preloader) preloader.classList.add('is-hidden');
+    introGate?.classList.add('is-hidden');
+    document.querySelector('.site-header')?.style.setProperty('opacity', '1');
+    document.querySelector('.site-header')?.style.setProperty('pointer-events', 'auto');
+    ScrollTrigger.refresh();
+  } else {
+    introTimeline = gsap.timeline();
+    gsap.from('.intro-gate__caption', { y: 10, opacity: 0, duration: .45, delay: .15, ease: 'power3.out' });
+    introTimeline
+      .from('.preloader__logo', { scale: .7, opacity: 0, duration: .3, ease: 'back.out(1.8)' })
+      .from('.preloader__wordmark, .preloader__counter', { y: 10, opacity: 0, duration: .24, stagger: .05 }, '-=.08')
+      .to(counter, { value: 100, duration: .55, ease: 'power2.inOut', onUpdate: () => { document.querySelector('.preloader__counter span').textContent = Math.round(counter.value); } }, '-=.07')
+      .to(preloader, { autoAlpha: 0, yPercent: -100, duration: .5, ease: 'power4.inOut', onComplete: () => preloader.classList.add('is-hidden') })
+      .to({}, { duration: .2 })
+      .to('.intro-gate__door-mask--left', { xPercent: -100, duration: .7, ease: 'power4.inOut' })
+      .to('.intro-gate__door-mask--right', { xPercent: 100, duration: .7, ease: 'power4.inOut' }, '<')
+      .to('.intro-gate', {
+        autoAlpha: 0,
+        scale: .96,
+        duration: .55,
+        transformOrigin: '50% 50%',
+        ease: 'power4.inOut',
+        onComplete: finishIntro
+      })
+      .to('.site-header', { autoAlpha: 1, pointerEvents: 'auto', duration: .25, ease: 'power3.out' })
+      .from('.hero__eyebrow', { y: 20, opacity: 0, duration: .35, ease: 'power3.out' }, '-=.12')
+      .from('.hero-title__word', { yPercent: 115, rotate: 3, opacity: 0, duration: .5, stagger: .08, ease: 'power4.out' }, '-=.15')
+      .from('.hero__copy, .hero__bottom', { y: 28, opacity: 0, duration: .4, stagger: .08, ease: 'power3.out' }, '-=.2');
+  }
 
   // Split section headings into word spans without changing their accessible text.
   const splitHeading = heading => {
