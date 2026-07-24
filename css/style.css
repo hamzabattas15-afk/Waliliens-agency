@@ -788,6 +788,25 @@ h2 em {
   background: linear-gradient(45deg, transparent 50%, var(--cyan-accent) 50%)
     right 8px center/7px 7px no-repeat;
 }
+
+/* Native option menus inherit platform styling inconsistently, so define the
+   colors explicitly where browsers allow it. */
+#contact-project {
+  color-scheme: dark;
+}
+
+#contact-project option {
+  background-color: var(--navy-deep);
+  color: var(--white);
+}
+
+#contact-project:focus,
+#contact-project:focus-visible {
+  border-color: var(--cyan-accent);
+  box-shadow:
+    0 0 0 1px var(--cyan-accent),
+    0 7px 17px -11px var(--cyan-accent);
+}
 .contact-submit {
   position: relative;
   min-width: 156px;
