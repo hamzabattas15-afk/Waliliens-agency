@@ -521,6 +521,27 @@ h2 em {
   z-index: 1;
   color: var(--cyan-accent);
   font-size: 25px;
+  padding: 6px;
+  border-radius: 6px;
+  outline: none;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.service-card > a:hover,
+.service-card > a:focus-visible {
+  transform: translate(4px, -4px);
+  background-color: rgba(94, 234, 212, 0.1);
+}
+.service-icon svg {
+  width: 28px;
+  height: 28px;
+}
+.service-arrow {
+  width: 28px;
+  height: 28px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .process {
