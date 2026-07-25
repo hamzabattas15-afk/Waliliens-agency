@@ -776,10 +776,13 @@ h2 em {
 }
 .form-field input:focus + label,
 .form-field input:not(:placeholder-shown) + label,
+.form-field input:-webkit-autofill + label,
 .form-field textarea:focus + label,
 .form-field textarea:not(:placeholder-shown) + label,
+.form-field textarea:-webkit-autofill + label,
 .form-field select:focus + label,
-.form-field select:valid + label {
+.form-field select:valid + label,
+.form-field select:-webkit-autofill + label {
   color: var(--cyan-accent);
   transform: translateY(-12px) scale(0.76);
 }

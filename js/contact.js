@@ -1,7 +1,13 @@
 async function submitForm(data) {
-  const response = await fetch('/api/contact', {
+  const turnstileToken = data['cf-turnstile-response'];
+  if (turnstileToken) delete data['cf-turnstile-response'];
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (turnstileToken) headers['cf-turnstile-response'] = turnstileToken;
+
+  const response = await fetch(`${window.APP_CONFIG?.API_BASE_URL || ''}/api/contact`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(data),
   });
 
