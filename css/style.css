@@ -729,6 +729,17 @@ h2 em {
   color: var(--text-gray);
   font-size: 12px;
 }
+.project__visual {
+  transition: border-color 0.35s ease, transform 0.4s ease;
+}
+.project:hover .project__visual,
+.project:focus-within .project__visual {
+  border-color: rgba(94, 234, 212, 0.5);
+  transform: translateY(-3px);
+}
+.project {
+  outline: none;
+}
 
 .contact {
   background: linear-gradient(135deg, #090b1b, #111a35);
