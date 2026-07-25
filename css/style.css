@@ -564,14 +564,16 @@ h2 em {
 }
 .steps article {
   display: grid;
-  grid-template-columns: 75px 1fr 1.4fr;
+  grid-template-columns: 45px 48px 1fr 1.4fr;
   gap: 15px;
+  align-items: start;
   padding: 25px 0;
   border-bottom: 1px solid var(--line);
 }
 .steps span {
   color: var(--cyan-accent);
   font: 600 12px "Space Grotesk";
+  padding-top: 4px;
 }
 .steps h3 {
   color: var(--white);
@@ -580,6 +582,15 @@ h2 em {
 .steps p {
   color: var(--text-gray);
   font-size: 13px;
+}
+.process-icon {
+  width: 36px;
+  height: 36px;
+  stroke: var(--cyan-accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
 }
 .process::before,
 .contact::before {
@@ -1085,10 +1096,10 @@ h2 em {
     grid-column: 1;
   }
   .steps article {
-    grid-template-columns: 45px 1fr;
+    grid-template-columns: 40px 40px 1fr;
   }
   .steps article p {
-    grid-column: 2;
+    grid-column: 1 / -1;
   }
   .section::before,
   .section::after {
@@ -1143,7 +1154,12 @@ h2 em {
     font-size: clamp(37px, 11vw, 48px);
   }
   .steps article {
-    padding: 20px 0;
+    grid-template-columns: 32px 36px 1fr;
+    gap: 10px;
+    padding: 18px 0;
+  }
+  .steps article p {
+    grid-column: 1 / -1;
   }
   .steps h3 {
     font-size: 19px;
@@ -1174,23 +1190,14 @@ h2 em {
     padding-left: 30px;
   }
 }
-.steps article {
-  grid-template-columns: 45px 48px 1fr 1.4fr;
-}
+
 .footer__top .footer-socials {
   gap: 12px;
 }
 .footer-socials a {
   font-size: 0;
 }
-@media (max-width: 768px) {
-  .steps article {
-    grid-template-columns: 45px 42px 1fr;
-  }
-  .steps article p {
-    grid-column: 3;
-  }
-}
+
 
 /* Monumental cinematic composition overrides */
 .hero {
