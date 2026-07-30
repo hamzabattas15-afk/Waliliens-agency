@@ -1,0 +1,193 @@
+{
+  "projects": [
+    {
+      "id": "nova-finance",
+      "slug": "nova-finance",
+      "title": "Nova Finance",
+      "tagline": "Modern fintech platform rebrand",
+      "featured": true,
+      "client": "Nova Finance",
+      "industry": "Financial Technology",
+      "description": "Complete rebrand and web platform redesign for a next-generation fintech company.",
+      "challenge": "Nova Finance needed to establish themselves as a modern, trustworthy fintech player in a crowded market. Their existing visual identity felt outdated and their website wasn't converting qualified leads.",
+      "solution": "We developed a comprehensive rebrand including logo, design system, and website rebuild. The new platform emphasizes security, simplicity, and transparency with an intuitive interface that guides users through complex financial concepts.",
+      "technologies": ["React", "TypeScript", "Tailwind CSS", "Next.js", "Stripe API", "PostgreSQL"],
+      "timeline": "4 months",
+      "heroImage": "/images/portfolio/nova-hero.webp",
+      "gallery": [
+        "/images/portfolio/nova-1.webp",
+        "/images/portfolio/nova-2.webp",
+        "/images/portfolio/nova-3.webp",
+        "/images/portfolio/nova-4.webp"
+      ],
+      "results": "Successfully launched rebrand with 40% increase in qualified leads within first 3 months.",
+      "metrics": {
+        "leadIncrease": "+40%",
+        "conversionRate": "+28%",
+        "timeOnSite": "+3.2m",
+        "sessionDuration": "+85%"
+      },
+      "category": "web-development",
+      "year": 2024,
+      "team": ["Design", "Development", "Strategy"],
+      "caseStudyUrl": "/portfolio/nova-finance"
+    },
+    {
+      "id": "motion-studio",
+      "slug": "motion-studio",
+      "title": "Motion Studio",
+      "tagline": "Creative studio portfolio website",
+      "featured": false,
+      "client": "Motion Studio",
+      "industry": "Creative Services",
+      "description": "Portfolio website for a motion graphics and video production studio.",
+      "challenge": "Motion Studio needed a website that showcased their creative work while being performant and SEO-friendly.",
+      "solution": "Built a video-first portfolio with custom video streaming, lazy loading optimization, and a focus on visual storytelling.",
+      "technologies": ["Next.js", "Framer Motion", "Three.js", "Vercel", "Cloudinary"],
+      "timeline": "6 weeks",
+      "heroImage": "/images/portfolio/motion-hero.webp",
+      "gallery": [
+        "/images/portfolio/motion-1.webp",
+        "/images/portfolio/motion-2.webp",
+        "/images/portfolio/motion-3.webp"
+      ],
+      "results": "Achieved 98 Lighthouse performance score and tripled portfolio inquiries.",
+      "metrics": {
+        "performanceScore": "98",
+        "inquiries": "+300%",
+        "pageLoadTime": "1.8s",
+        "mobileScore": "97"
+      },
+      "category": "web-development",
+      "year": 2024,
+      "team": ["Design", "Development"],
+      "caseStudyUrl": "/portfolio/motion-studio"
+    },
+    {
+      "id": "flow-operations",
+      "slug": "flow-operations",
+      "title": "Flow Operations",
+      "tagline": "AI-powered workflow automation",
+      "featured": true,
+      "client": "Flow Operations",
+      "industry": "Automation",
+      "description": "Custom AI automation solution for streamlining business operations and reducing manual work.",
+      "challenge": "Flow Operations was spending 40+ hours per week on repetitive manual tasks across different tools and systems.",
+      "solution": "We built a custom AI automation platform that integrates with their existing tools, uses machine learning to optimize workflows, and provides real-time reporting and insights.",
+      "technologies": ["Python", "FastAPI", "React", "OpenAI API", "PostgreSQL", "Redis", "Docker"],
+      "timeline": "3 months",
+      "heroImage": "/images/portfolio/flow-hero.webp",
+      "gallery": [
+        "/images/portfolio/flow-1.webp",
+        "/images/portfolio/flow-2.webp",
+        "/images/portfolio/flow-3.webp",
+        "/images/portfolio/flow-4.webp",
+        "/images/portfolio/flow-5.webp"
+      ],
+      "results": "Reduced manual work by 85%, saving 30+ hours per week and improving accuracy to 99.2%.",
+      "metrics": {
+        "timeReduction": "-85%",
+        "accuracy": "99.2%",
+        "costSavings": "$180K/year",
+        "roi": "340%"
+      },
+      "category": "ai-automation",
+      "year": 2024,
+      "team": ["Strategy", "AI Development", "Integration"],
+      "caseStudyUrl": "/portfolio/flow-operations"
+    },
+    {
+      "id": "luxe-commerce",
+      "slug": "luxe-commerce",
+      "title": "Luxe Commerce",
+      "tagline": "Luxury e-commerce platform",
+      "featured": false,
+      "client": "Luxe Commerce",
+      "industry": "E-Commerce",
+      "description": "High-end e-commerce platform for luxury fashion and accessories with premium UX.",
+      "challenge": "Luxe needed an e-commerce platform that reflected their premium brand while handling high transaction volumes securely.",
+      "solution": "Built a custom Shopify Plus theme with advanced filtering, personalization engine, and seamless checkout experience optimized for luxury buyers.",
+      "technologies": ["Shopify Plus", "Liquid", "React", "Node.js", "Stripe", "Algolia"],
+      "timeline": "3 months",
+      "heroImage": "/images/portfolio/luxe-hero.webp",
+      "gallery": [
+        "/images/portfolio/luxe-1.webp",
+        "/images/portfolio/luxe-2.webp",
+        "/images/portfolio/luxe-3.webp"
+      ],
+      "results": "Increased average order value by 35% and reduced cart abandonment by 22%.",
+      "metrics": {
+        "aovIncrease": "+35%",
+        "cartAbandon": "-22%",
+        "conversionRate": "+18%",
+        "returnCustomers": "+44%"
+      },
+      "category": "web-development",
+      "year": 2023,
+      "team": ["Design", "Development", "Strategy"],
+      "caseStudyUrl": "/portfolio/luxe-commerce"
+    },
+    {
+      "id": "ai-content-hub",
+      "slug": "ai-content-hub",
+      "title": "AI Content Hub",
+      "tagline": "AI-powered content generation platform",
+      "featured": true,
+      "client": "Content Hub AI",
+      "industry": "AI/SaaS",
+      "description": "SaaS platform for AI-powered content generation with team collaboration features.",
+      "challenge": "Content creators needed a platform to generate, collaborate on, and manage AI-powered content at scale.",
+      "solution": "Developed a full-stack SaaS platform with real-time collaboration, custom AI models, and advanced analytics dashboard.",
+      "technologies": ["Next.js", "TypeScript", "Prisma", "OpenAI", "Stripe", "Socket.io", "PostgreSQL"],
+      "timeline": "5 months",
+      "heroImage": "/images/portfolio/hub-hero.webp",
+      "gallery": [
+        "/images/portfolio/hub-1.webp",
+        "/images/portfolio/hub-2.webp",
+        "/images/portfolio/hub-3.webp",
+        "/images/portfolio/hub-4.webp"
+      ],
+      "results": "Reached 1000+ active users within 6 months with 85% retention rate.",
+      "metrics": {
+        "activeUsers": "1000+",
+        "retention": "85%",
+        "mrr": "$12K",
+        "nps": "72"
+      },
+      "category": "ai-automation",
+      "year": 2024,
+      "team": ["Full-Stack", "AI", "Product"],
+      "caseStudyUrl": "/portfolio/ai-content-hub"
+    },
+    {
+      "id": "healthcare-portal",
+      "slug": "healthcare-portal",
+      "title": "Healthcare Portal",
+      "tagline": "HIPAA-compliant patient portal",
+      "featured": false,
+      "client": "HealthCare+ Networks",
+      "industry": "Healthcare",
+      "description": "HIPAA-compliant patient portal with appointment scheduling and telemedicine integration.",
+      "challenge": "Healthcare providers needed a secure, compliant patient portal that didn't require extensive IT support.",
+      "solution": "Built a HIPAA-compliant portal with end-to-end encryption, audit logging, and seamless integration with existing hospital systems.",
+      "technologies": ["Node.js", "React", "PostgreSQL", "AWS", "Encryption", "Video.js"],
+      "timeline": "4 months",
+      "heroImage": "/images/portfolio/health-hero.webp",
+      "gallery": [
+        "/images/portfolio/health-1.webp",
+        "/images/portfolio/health-2.webp"
+      ],
+      "results": "Deployed across 12 healthcare facilities serving 50,000+ patients securely.",
+      "metrics": {
+        "facilities": "12",
+        "patients": "50K+",
+        "securityScore": "100%",
+        "uptime": "99.99%"
+      },
+      "category": "web-development",
+      "year": 2023,
+      "team": ["Security", "Backend", "Compliance"],
+      "caseStudyUrl": "/portfolio/healthcare-portal"
+    }
+  ]
+}

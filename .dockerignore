@@ -1,0 +1,11 @@
+.git
+.agents
+.codex
+Waliliens-.zip
+backend/node_modules
+backend/dist
+backend/coverage
+backend/.env
+backend/.env.*
+!backend/.env.example
+.DS_Store

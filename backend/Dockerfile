@@ -5,6 +5,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+RUN apk add --no-cache openssl
+
 # Install dependencies first (layer cached if package.json unchanged)
 COPY package*.json ./
 RUN npm ci --include=dev
@@ -12,10 +14,9 @@ RUN npm ci --include=dev
 # Copy source and compile
 COPY tsconfig*.json ./
 COPY src ./src
-COPY prisma ./prisma
 
 # Generate Prisma client
-RUN npx prisma generate
+RUN npm run db:generate
 
 # Compile TypeScript
 RUN npm run build
@@ -26,6 +27,8 @@ RUN npm run build
 FROM node:20-alpine AS runner
 
 WORKDIR /app
+
+RUN apk add --no-cache openssl
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
@@ -38,7 +41,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 # Copy compiled code and Prisma artifacts
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY prisma ./prisma
+COPY --from=builder /app/src ./src
 
 # Switch to non-root user
 USER waliliens

@@ -1,0 +1,70 @@
+{
+  "testimonials": [
+    {
+      "id": "testimonial-1",
+      "author": "Marie Laurent",
+      "company": "Nova Finance",
+      "role": "CEO",
+      "content": "Working with Waliliens transformed our brand and digital presence. In just 4 months, we saw a 40% increase in qualified leads. Their team understood our vision and executed flawlessly.",
+      "rating": 5,
+      "photo": "/images/team/marie.webp",
+      "logo": "/images/logos/nova.svg",
+      "featured": true
+    },
+    {
+      "id": "testimonial-2",
+      "author": "Alexandre Dubois",
+      "company": "Motion Studio",
+      "role": "Founder",
+      "content": "The performance of our new portfolio site is unbelievable. 98 Lighthouse score isn't just a number—it translates to three times more inquiries from premium clients. Highly recommend!",
+      "rating": 5,
+      "photo": "/images/team/alex.webp",
+      "logo": "/images/logos/motion.svg",
+      "featured": true
+    },
+    {
+      "id": "testimonial-3",
+      "author": "Sophie Mercier",
+      "company": "Flow Operations",
+      "role": "Operations Director",
+      "content": "The AI automation solution saved us 85% on manual work. What took our team days now takes hours. The ROI was immediate and the impact on our team's productivity has been game-changing.",
+      "rating": 5,
+      "photo": "/images/team/sophie.webp",
+      "logo": "/images/logos/flow.svg",
+      "featured": true
+    },
+    {
+      "id": "testimonial-4",
+      "author": "Thomas Moreau",
+      "company": "Luxe Commerce",
+      "role": "VP E-Commerce",
+      "content": "Our average order value increased by 35% and cart abandonment dropped by 22%. The design is beautiful and the performance is exceptional. This is enterprise-level work.",
+      "rating": 5,
+      "photo": "/images/team/thomas.webp",
+      "logo": "/images/logos/luxe.svg",
+      "featured": false
+    },
+    {
+      "id": "testimonial-5",
+      "author": "Emma Chartrand",
+      "company": "Content Hub AI",
+      "role": "Product Lead",
+      "content": "Waliliens built our entire SaaS platform and they guided us through every technical decision. The attention to detail, performance, and security is outstanding. Best decision we made.",
+      "rating": 5,
+      "photo": "/images/team/emma.webp",
+      "logo": "/images/logos/hub.svg",
+      "featured": false
+    },
+    {
+      "id": "testimonial-6",
+      "author": "Dr. Jean-Paul Blanc",
+      "company": "HealthCare+ Networks",
+      "role": "CTO",
+      "content": "HIPAA compliance is non-negotiable in healthcare. Their security expertise and attention to regulatory requirements gave us confidence from day one. 99.99% uptime is perfect.",
+      "rating": 5,
+      "photo": "/images/team/jean.webp",
+      "logo": "/images/logos/healthcare.svg",
+      "featured": false
+    }
+  ]
+}

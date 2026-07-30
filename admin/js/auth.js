@@ -62,14 +62,19 @@ const Auth = (() => {
     return false;
   };
 
-  return { setToken, getToken, fetchWithAuth, refreshToken };
+  const restoreSession = async () => {
+    if (accessToken) return true;
+    return refreshToken();
+  };
+
+  return { setToken, getToken, fetchWithAuth, refreshToken, restoreSession };
 })();
 
 // Login Form Handler (only on index.html)
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
   // On load, try to refresh token. If success, redirect to dashboard
-  Auth.refreshToken().then(success => {
+  Auth.restoreSession().then(success => {
     if (success) {
       window.location.href = 'dashboard.html';
     }

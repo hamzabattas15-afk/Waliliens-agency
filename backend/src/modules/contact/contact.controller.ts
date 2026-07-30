@@ -35,7 +35,10 @@ export async function submitContact(
 
     // Optional: Cloudflare Turnstile verification
     const turnstileToken = req.headers['cf-turnstile-response'] as string | undefined;
-    if (process.env.TURNSTILE_SECRET_KEY && turnstileToken) {
+    if (process.env.TURNSTILE_SECRET_KEY) {
+      if (!turnstileToken) {
+        throw new AppError('Vérification CAPTCHA requise', 400, 'CAPTCHA_REQUIRED');
+      }
       const { verifyTurnstile } = await import('./contact.service.js');
       const ip = req.ip ?? '0.0.0.0';
       const valid = await verifyTurnstile(turnstileToken, ip);

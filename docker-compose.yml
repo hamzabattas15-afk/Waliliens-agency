@@ -1,5 +1,4 @@
 services:
-  # ── PostgreSQL ──────────────────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -9,41 +8,37 @@ services:
       POSTGRES_DB: waliliens_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U waliliens -d waliliens_db']
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ── Redis ───────────────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
     restart: unless-stopped
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
-    ports:
-      - '6379:6379'
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ── API ─────────────────────────────────────────────────────────────────────
   api:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       target: runner
     restart: unless-stopped
     env_file:
-      - .env
+      - ./backend/.env
     environment:
+      NODE_ENV: production
       DATABASE_URL: postgresql://waliliens:waliliens_dev_pw@postgres:5432/waliliens_db
       REDIS_URL: redis://redis:6379
+      ALLOWED_ORIGINS: http://localhost,http://127.0.0.1,http://localhost:8080,http://127.0.0.1:8080
     ports:
       - '3001:3001'
     depends_on:
@@ -58,15 +53,24 @@ services:
       start_period: 40s
       retries: 3
 
-  # ── Prisma migrate + seed (one-shot) ────────────────────────────────────────
-  # Run manually: docker compose run --rm migrate
-  migrate:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    depends_on:
+      api:
+        condition: service_healthy
+
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
       target: builder
     env_file:
-      - .env
+      - ./backend/.env
     environment:
       DATABASE_URL: postgresql://waliliens:waliliens_dev_pw@postgres:5432/waliliens_db
     command: sh -c "npx prisma migrate deploy --schema=src/db/schema.prisma && npx tsx src/db/seed.ts"

@@ -637,6 +637,13 @@ h2 em {
   grid-template-columns: 1.35fr 1fr;
   gap: 40px 20px;
 }
+
+.work__disclaimer {
+  max-width: 38rem;
+  margin: -24px 0 34px;
+  color: var(--text-gray);
+  font-size: 0.875rem;
+}
 .project--large {
   grid-row: span 2;
 }

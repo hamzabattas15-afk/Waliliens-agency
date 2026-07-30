@@ -59,8 +59,8 @@
         <thead>
           <tr>
             <th>Title</th>
-            <th>Client</th>
-            <th>Type</th>
+            <th>Category</th>
+            <th>Order</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -87,24 +87,28 @@
           <input type="text" id="projectTitle" required>
         </div>
         <div class="form-group">
-          <label for="projectClient">Client (optional)</label>
-          <input type="text" id="projectClient">
+          <label for="projectSlug">Slug</label>
+          <input type="text" id="projectSlug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required>
         </div>
         <div class="form-group">
-          <label for="projectDescription">Description (optional)</label>
-          <textarea id="projectDescription"></textarea>
+          <label for="projectDescription">Description</label>
+          <textarea id="projectDescription" required></textarea>
         </div>
         <div class="form-group">
-          <label for="projectType">Project Type (optional)</label>
-          <input type="text" id="projectType">
+          <label for="projectCategory">Category</label>
+          <input type="text" id="projectCategory" required>
         </div>
         <div class="form-group">
-          <label for="projectLink">Link (optional)</label>
-          <input type="url" id="projectLink">
+          <label for="projectTags">Tags (comma-separated)</label>
+          <input type="text" id="projectTags">
         </div>
         <div class="form-group">
           <label for="projectImageUrl">Image URL (optional)</label>
           <input type="url" id="projectImageUrl">
+        </div>
+        <div class="form-group">
+          <label for="projectSortOrder">Display order</label>
+          <input type="number" id="projectSortOrder" min="0" value="0" required>
         </div>
         <div class="form-group">
           <label for="projectPublished">Published</label>
@@ -138,13 +142,13 @@
       if (viewName === 'projects') loadProjects();
     }
     
-    // Auth check on load
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!Auth.getToken()) {
-        window.location.href = 'index.html';
-      } else {
-        loadLeads();
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authenticated = await Auth.restoreSession();
+      if (!authenticated) {
+        window.location.replace('index.html');
+        return;
       }
+      loadLeads();
     });
   </script>
 </body>

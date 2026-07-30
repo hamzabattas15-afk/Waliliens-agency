@@ -75,6 +75,15 @@ docker compose up -d
 docker compose run --rm migrate
 ```
 
+From the repository root, use the full Docker setup to run the frontend too:
+
+```bash
+docker compose --profile migrate up --build migrate
+docker compose up --build -d
+```
+
+The frontend is served at `http://localhost:8080`.
+
 ---
 
 ## Running Tests
