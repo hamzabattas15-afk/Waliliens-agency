@@ -1,0 +1,14 @@
+services:
+  frontend:
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html
+      - ./services.html:/usr/share/nginx/html/services.html
+      - ./process.html:/usr/share/nginx/html/process.html
+      - ./work.html:/usr/share/nginx/html/work.html
+      - ./robots.txt:/usr/share/nginx/html/robots.txt
+      - ./sitemap.xml:/usr/share/nginx/html/sitemap.xml
+      - ./admin:/usr/share/nginx/html/admin
+      - ./css:/usr/share/nginx/html/css
+      - ./data:/usr/share/nginx/html/data
+      - ./images:/usr/share/nginx/html/images
+      - ./js:/usr/share/nginx/html/js
