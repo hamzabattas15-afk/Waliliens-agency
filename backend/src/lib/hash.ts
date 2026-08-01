@@ -27,12 +27,3 @@ export function hashIp(ip: string): string {
   const SALT = 'waliliens-ip-salt-2025';
   return createHash('sha256').update(`${ip}:${SALT}`).digest('hex');
 }
-
-// ─── Constant-time string comparison (prevent timing attacks) ─────────────────
-
-export function safeCompare(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  const bufA = Buffer.from(a);
-  const bufB = Buffer.from(b);
-  return bufA.equals(bufB);
-}
