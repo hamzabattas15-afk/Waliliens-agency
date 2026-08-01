@@ -1,6 +1,9 @@
-document.addEventListener('DOMContentLoaded', async () => {
+// Runs on a full page load and again after every PJAX swap; the dataset flag
+// lives on the grid itself, so each swapped-in <main> is hydrated exactly once.
+async function initProjectsPage() {
   const grid = document.querySelector('#projects-grid');
-  if (!grid) return;
+  if (!grid || grid.dataset.hydrated === 'true') return;
+  grid.dataset.hydrated = 'true';
 
   try {
     const response = await fetch(`${window.APP_CONFIG?.API_BASE_URL || ''}/api/projects`);
@@ -12,7 +15,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch {
     // Keep the inline concept cards visible if the API is offline.
   }
-});
+}
+
+// When this file is injected by a PJAX swap, DOMContentLoaded has already
+// fired and never will again — initialise immediately in that case.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initProjectsPage);
+} else {
+  initProjectsPage();
+}
+document.addEventListener('waliliens:pjax', initProjectsPage);
 
 function createProjectCard(project, index, visualClasses) {
   const card = document.createElement('article');

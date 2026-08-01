@@ -21,9 +21,19 @@ async function submitForm(data) {
   return resData;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// Runs on a full page load and again after every PJAX swap; the dataset flag
+// lives on the <form> itself, so a freshly swapped-in <main> is always bound
+// exactly once and a repeat call on the same DOM is a no-op.
+function initContactPage() {
   const form = document.querySelector('#contact-form');
-  if (!form) return;
+  if (!form || form.dataset.contactBound === 'true') return;
+  form.dataset.contactBound = 'true';
+
+  // Turnstile only auto-renders during its initial page scan; a widget that
+  // arrived via PJAX after that scan must be rendered explicitly.
+  const widget = form.querySelector('.cf-turnstile');
+  if (widget && !widget.hasChildNodes() && window.turnstile) window.turnstile.render(widget);
+
   const button = form.querySelector('.contact-submit');
   const message = form.querySelector('.form-message');
 
@@ -52,4 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
       message.classList.add('is-error');
     }
   });
-});
+}
+
+// When this file is injected by a PJAX swap, DOMContentLoaded has already
+// fired and never will again — initialise immediately in that case.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initContactPage);
+} else {
+  initContactPage();
+}
+document.addEventListener('waliliens:pjax', initContactPage);

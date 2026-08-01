@@ -35,7 +35,60 @@ document.addEventListener('DOMContentLoaded', () => {
     const documentNext = new DOMParser().parseFromString(await response.text(), 'text/html');
     const mainNext = documentNext.querySelector('main');
     if (!mainNext) throw new Error('The requested page does not contain a <main> element.');
-    return { mainNext, title: documentNext.title };
+    return { mainNext, title: documentNext.title, documentNext };
+  };
+
+  // PJAX keeps the current document head, so load target-only styles before
+  // revealing its main content (for example css/services.css).
+  const syncStylesheets = async documentNext => {
+    const targetHrefs = [...documentNext.querySelectorAll('link[rel="stylesheet"]')]
+      .map(link => new URL(link.href, window.location.href).href);
+    const existingHrefs = new Set([...document.querySelectorAll('link[rel="stylesheet"]')]
+      .map(link => link.href));
+    const pending = targetHrefs.filter(href => !existingHrefs.has(href));
+
+    await Promise.all(pending.map(href => new Promise(resolve => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.dataset.pjaxStylesheet = 'true';
+      link.addEventListener('load', resolve, { once: true });
+      link.addEventListener('error', resolve, { once: true });
+      document.head.appendChild(link);
+    })));
+
+    document.querySelectorAll('link[data-pjax-stylesheet="true"]').forEach(link => {
+      if (!targetHrefs.includes(link.href)) link.remove();
+    });
+  };
+
+  // PJAX keeps the current document head, so scripts declared only by the
+  // target page (js/config.js, js/contact.js, Turnstile…) never run on their
+  // own. Inject the missing ones with fresh <script> elements — nodes copied
+  // from a DOMParser document are inert and would never execute.
+  const syncScripts = async documentNext => {
+    const loadedSrcs = new Set([...document.querySelectorAll('script[src]')]
+      .map(script => script.src));
+    const missing = [...documentNext.querySelectorAll('script[src]')]
+      .map(script => ({ href: new URL(script.getAttribute('src'), window.location.href).href, async: script.async }))
+      .filter(script => !loadedSrcs.has(script.href));
+
+    for (const { href, async } of missing) {
+      const script = document.createElement('script');
+      script.src = href;
+      script.async = async;
+      if (async) {
+        // async scripts (Turnstile) self-initialise on load; don't block the reveal.
+        document.head.appendChild(script);
+        continue;
+      }
+      // Sequential await keeps document order (config.js before contact.js).
+      await new Promise(resolve => {
+        script.addEventListener('load', resolve, { once: true });
+        script.addEventListener('error', resolve, { once: true });
+        document.head.appendChild(script);
+      });
+    }
   };
 
   // Keep the persistent header's current-page state in sync after a PJAX swap.
@@ -47,6 +100,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  // The intro animation only runs on a real page load. Remove only the
+  // incoming home gate during PJAX so it cannot cover the swapped content.
+  const preparePjaxMain = main => {
+    const introGate = main.querySelector('#intro-gate.intro-gate');
+    if (!introGate) return;
+    introGate.remove();
+    try { window.sessionStorage.setItem('waliliens-intro-seen', 'true'); } catch (error) {}
+  };
+
   // 4. Run a cover → swap → reveal timeline, then update browser history.
   const navigate = async (url, pushState = true) => {
     if (isTransitioning) return;
@@ -56,14 +118,23 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       // The wipe covers the old page before any DOM change is visible.
       await gsap.to(wipe, { yPercent: 0, duration: .65, ease: 'power4.inOut' });
-      const { mainNext, title } = await fetchPage(url);
+      const { mainNext, title, documentNext } = await fetchPage(url);
 
-      // Replace page-specific content while keeping the shared header and footer in place.
+      // Make target CSS and body-scoped styles available before the new main is visible.
+      await syncStylesheets(documentNext);
+      preparePjaxMain(mainNext);
       currentMain.replaceWith(mainNext);
+      document.body.className = documentNext.body.className;
       document.title = title;
       updateActiveNavigation(url);
       window.scrollTo(0, 0);
       if (pushState) window.history.pushState({ url }, '', url);
+
+      // Run the target page's own scripts, then tell already-loaded page
+      // scripts to re-initialise against the freshly swapped <main>.
+      await syncScripts(documentNext);
+      document.dispatchEvent(new CustomEvent('waliliens:pjax'));
+      window.WaliliensAnimations?.refreshPage?.();
 
       // Reveal the new page by moving the panel off the top of the viewport.
       await gsap.to(wipe, { yPercent: -100, duration: .7, ease: 'power4.inOut' });
