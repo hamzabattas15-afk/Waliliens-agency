@@ -10,7 +10,7 @@ import { env } from './config/env.js';
 import { logger } from './config/logger.js';
 import { checkDatabaseHealth } from './db/prisma.js';
 import { checkRedisHealth } from './config/redis.js';
-import { errorHandler } from './middleware/errorHandler.js';
+import { AppError, errorHandler } from './middleware/errorHandler.js';
 import { generalRateLimit } from './middleware/rateLimiter.js';
 
 // Module routes
@@ -68,7 +68,10 @@ export function createApp() {
         if (allowedOrigins.includes(origin)) {
           return callback(null, true);
         }
-        return callback(new Error(`CORS: origin ${origin} not allowed`), false);
+        return callback(
+          new AppError(`CORS: origin ${origin} not allowed`, 403, 'CORS_NOT_ALLOWED'),
+          false
+        );
       },
       credentials: true, // Allow cookies (refresh token)
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
