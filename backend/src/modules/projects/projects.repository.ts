@@ -30,13 +30,6 @@ export async function findAllProjects() {
   });
 }
 
-export async function findProjectBySlug(slug: string) {
-  return prisma.project.findUnique({
-    where: { slug },
-    select: PROJECT_SELECT,
-  });
-}
-
 export async function findProjectById(id: string) {
   return prisma.project.findUnique({
     where: { id },

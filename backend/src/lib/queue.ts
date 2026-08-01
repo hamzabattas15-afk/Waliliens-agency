@@ -1,5 +1,5 @@
 import { Queue } from 'bullmq';
-import { getRedisClient } from '../config/redis.js';
+import { createBullmqConnection } from '../config/redis.js';
 
 // ─── Queue definitions ────────────────────────────────────────────────────────
 
@@ -37,7 +37,7 @@ let emailQueue: Queue | null = null;
 export function getEmailQueue(): Queue {
   if (!emailQueue) {
     emailQueue = new Queue(QUEUE_NAMES.EMAIL, {
-      connection: getRedisClient(),
+      connection: createBullmqConnection(),
       defaultJobOptions: {
         attempts: 3,
         backoff: {

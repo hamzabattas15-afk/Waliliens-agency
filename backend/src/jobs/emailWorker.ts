@@ -1,5 +1,5 @@
 import { Worker, Job } from 'bullmq';
-import { getRedisClient } from '../config/redis.js';
+import { createBullmqConnection } from '../config/redis.js';
 import { logger } from '../config/logger.js';
 import { env } from '../config/env.js';
 import {
@@ -97,7 +97,7 @@ export function startEmailWorker(): Worker {
       }
     },
     {
-      connection: getRedisClient(),
+      connection: createBullmqConnection(),
       concurrency: 5,
     }
   );

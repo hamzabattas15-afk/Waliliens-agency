@@ -1,4 +1,4 @@
-import { getRedisClient } from '../../config/redis.js';
+import { getFastRedisClient, withRedisTimeout } from '../../config/redis.js';
 import { findPublishedProjects } from './projects.repository.js';
 import { logger } from '../../config/logger.js';
 import { env } from '../../config/env.js';
@@ -13,8 +13,8 @@ export async function getPublishedProjects() {
   }
 
   try {
-    const redis = getRedisClient();
-    const cached = await redis.get(CACHE_KEY);
+    const redis = getFastRedisClient();
+    const cached = await withRedisTimeout(redis.get(CACHE_KEY));
     if (cached) {
       logger.debug('Projects cache hit');
       return JSON.parse(cached) as Awaited<ReturnType<typeof findPublishedProjects>>;
@@ -26,8 +26,8 @@ export async function getPublishedProjects() {
   const projects = await findPublishedProjects();
 
   try {
-    const redis = getRedisClient();
-    await redis.setex(CACHE_KEY, CACHE_TTL_SECONDS, JSON.stringify(projects));
+    const redis = getFastRedisClient();
+    await withRedisTimeout(redis.setex(CACHE_KEY, CACHE_TTL_SECONDS, JSON.stringify(projects)));
   } catch {
     // Non-fatal — data was still returned
   }
@@ -37,8 +37,8 @@ export async function getPublishedProjects() {
 
 export async function invalidateProjectsCache(): Promise<void> {
   try {
-    const redis = getRedisClient();
-    await redis.del(CACHE_KEY);
+    const redis = getFastRedisClient();
+    await withRedisTimeout(redis.del(CACHE_KEY));
     logger.debug('Projects cache invalidated');
   } catch {
     logger.warn('Failed to invalidate projects cache');

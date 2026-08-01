@@ -324,15 +324,24 @@ vi.mock('rate-limit-redis', () => ({
   })),
 }));
 
+const mockRedisClient = () => ({
+  ping: vi.fn().mockResolvedValue('PONG'),
+  get: vi.fn().mockResolvedValue(null),
+  setex: vi.fn().mockResolvedValue('OK'),
+  del: vi.fn().mockResolvedValue(1),
+  call: vi.fn().mockResolvedValue(0),
+  quit: vi.fn().mockResolvedValue('OK'),
+  disconnect: vi.fn(),
+});
+
 vi.mock('../../src/config/redis.js', () => ({
-  getRedisClient: () => ({
-    ping: vi.fn().mockResolvedValue('PONG'),
-    get: vi.fn().mockResolvedValue(null),
-    setex: vi.fn().mockResolvedValue('OK'),
-    del: vi.fn().mockResolvedValue(1),
-    call: vi.fn().mockResolvedValue(0),
-    quit: vi.fn().mockResolvedValue('OK'),
-  }),
+  getRedisClient: mockRedisClient,
+  // Each real BullMQ Queue/Worker calls this once for its own dedicated
+  // connection — return a fresh object per call, matching getRedisClient()
+  // .duplicate() semantics.
+  createBullmqConnection: mockRedisClient,
+  getFastRedisClient: mockRedisClient,
+  withRedisTimeout: (promise: Promise<unknown>) => promise,
   closeRedis: vi.fn().mockResolvedValue(undefined),
   checkRedisHealth: vi.fn().mockResolvedValue(true),
 }));

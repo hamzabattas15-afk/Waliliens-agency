@@ -94,6 +94,14 @@ export function createApp() {
   }
 
   // ── Body parsing ──────────────────────────────────────────────────────────────
+  // Admin project payloads (description alone allows up to 10000 chars) can
+  // exceed the global 10kb default — give that route its own larger parser.
+  // Mounted before the global one: body-parser skips re-parsing a body it's
+  // already parsed (see body-parser/lib/types/json.js), so this only raises
+  // the limit for /api/admin/projects — every other route, in particular
+  // /api/contact, still hits the global parser below and keeps the tight
+  // 10kb limit.
+  app.use('/api/admin/projects', express.json({ limit: '100kb' }));
   app.use(express.json({ limit: '10kb' })); // Limit to prevent large payload attacks
   app.use(express.urlencoded({ extended: true, limit: '10kb' }));
   app.use(cookieParser());

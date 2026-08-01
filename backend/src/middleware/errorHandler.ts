@@ -43,19 +43,6 @@ export function errorHandler(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
 ): void {
-  // Zod validation errors (from zod-express or manual parsing)
-  if (err.name === 'ZodError') {
-    res.status(422).json({
-      success: false,
-      error: {
-        message: 'Validation failed',
-        code: 'VALIDATION_ERROR',
-        details: JSON.parse(err.message),
-      },
-    } satisfies ApiErrorResponse);
-    return;
-  }
-
   // JWT errors
   if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
     res.status(401).json({
