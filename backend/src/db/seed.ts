@@ -3,28 +3,56 @@ import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    console.error(
+      `❌ ${name} is required to seed the database (no hardcoded fallback). Set it and retry.`
+    );
+    process.exit(1);
+  }
+  return value;
+}
+
 async function main() {
+  // Seeding hardcoded/dev credentials into a real production database is
+  // exactly the kind of thing that should require a deliberate, explicit
+  // override — not run silently because someone's .env happened to have
+  // NODE_ENV=production.
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_PROD_SEED !== 'true') {
+    console.error(
+      '❌ Refusing to seed a production database. Set ALLOW_PROD_SEED=true to override.'
+    );
+    process.exit(1);
+  }
+
   console.log('🌱 Seeding database...');
 
   // ── Admin users ──────────────────────────────────────────────────────────
 
-  const adminPassword = await argon2.hash('Waliliens2025!', {
+  const adminPasswordPlain = requireEnv('SEED_ADMIN_PASSWORD');
+  const viewerPasswordPlain = requireEnv('SEED_VIEWER_PASSWORD');
+
+  const adminPassword = await argon2.hash(adminPasswordPlain, {
     type: argon2.argon2id,
     memoryCost: 65536,
     timeCost: 3,
     parallelism: 4,
   });
 
-  const viewerPassword = await argon2.hash('Viewer2025!', {
+  const viewerPassword = await argon2.hash(viewerPasswordPlain, {
     type: argon2.argon2id,
     memoryCost: 65536,
     timeCost: 3,
     parallelism: 4,
   });
 
+  // `update` intentionally omits passwordHash — re-running the seed against
+  // an existing database must not silently reset a real admin's password
+  // back to whatever SEED_ADMIN_PASSWORD happens to be set to right now.
   const admin = await prisma.user.upsert({
     where: { email: 'admin@waliliens.com' },
-    update: { passwordHash: adminPassword, role: Role.ADMIN },
+    update: { role: Role.ADMIN },
     create: {
       email: 'admin@waliliens.com',
       name: 'Waliliens Admin',
@@ -35,7 +63,7 @@ async function main() {
 
   const viewer = await prisma.user.upsert({
     where: { email: 'viewer@waliliens.com' },
-    update: { passwordHash: viewerPassword, role: Role.VIEWER },
+    update: { role: Role.VIEWER },
     create: {
       email: 'viewer@waliliens.com',
       name: 'Waliliens Viewer',
@@ -118,9 +146,8 @@ async function main() {
 
   console.log('✅ Sample lead created');
   console.log('\n🎉 Seed complete!');
-  console.log('   Admin:  admin@waliliens.com / Waliliens2025!');
-  console.log('   Viewer: viewer@waliliens.com / Viewer2025!');
-  console.log('   ⚠️  Change these passwords before going to production!');
+  console.log('   Admin:  admin@waliliens.com (password: SEED_ADMIN_PASSWORD)');
+  console.log('   Viewer: viewer@waliliens.com (password: SEED_VIEWER_PASSWORD)');
 }
 
 main()

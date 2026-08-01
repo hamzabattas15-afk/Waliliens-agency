@@ -47,15 +47,21 @@ docker compose up -d
 
 ### 3. Install Dependencies & Seed Database
 
+The seed script (`src/db/seed.ts`) reads the initial admin/viewer passwords
+from `SEED_ADMIN_PASSWORD` / `SEED_VIEWER_PASSWORD` — set both in `.env`
+first (it fails loudly if either is unset, and never resets an existing
+user's password on re-run). It also refuses to run at all when
+`NODE_ENV=production` unless `ALLOW_PROD_SEED=true` is explicitly set.
+
 ```bash
 npm install
 npx prisma migrate dev --name init
 npm run db:seed
 ```
 
-Default seeded credentials:
-- **Admin**: `admin@waliliens.com` / `Waliliens2025!`
-- **Viewer**: `viewer@waliliens.com` / `Viewer2025!`
+Seeded accounts:
+- **Admin**: `admin@waliliens.com` / (your `SEED_ADMIN_PASSWORD`)
+- **Viewer**: `viewer@waliliens.com` / (your `SEED_VIEWER_PASSWORD`)
 
 ### 4. Start Development Server
 
