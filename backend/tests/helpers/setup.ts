@@ -277,19 +277,11 @@ const mockPrisma = {
 };
 
 // ── Mock DB module ─────────────────────────────────────────────────────────────
-vi.mock('/Users/meh-j23/waliliens/Waliliens-/backend/src/db/prisma.ts', () => ({
-  prisma: mockPrisma,
-  checkDatabaseHealth: vi.fn().mockResolvedValue(true),
-}));
-vi.mock('../src/db/prisma.js', () => ({
-  prisma: mockPrisma,
-  checkDatabaseHealth: vi.fn().mockResolvedValue(true),
-}));
-vi.mock('../../db/prisma.js', () => ({
-  prisma: mockPrisma,
-  checkDatabaseHealth: vi.fn().mockResolvedValue(true),
-}));
-vi.mock('../db/prisma.js', () => ({
+// Resolved relative to this file (tests/helpers/setup.ts): up to tests/, up to
+// backend/, then into src/db/prisma.js — vi.mock intercepts by the module's
+// resolved absolute path, so every importer (src/app.ts, tests/*.test.ts, etc.)
+// picks up this mock regardless of the relative specifier *they* use.
+vi.mock('../../src/db/prisma.js', () => ({
   prisma: mockPrisma,
   checkDatabaseHealth: vi.fn().mockResolvedValue(true),
 }));
@@ -317,7 +309,7 @@ vi.mock('rate-limit-redis', () => ({
   })),
 }));
 
-vi.mock('../src/config/redis.js', () => ({
+vi.mock('../../src/config/redis.js', () => ({
   getRedisClient: () => ({
     ping: vi.fn().mockResolvedValue('PONG'),
     get: vi.fn().mockResolvedValue(null),
@@ -342,7 +334,7 @@ vi.mock('bullmq', () => ({
   })),
 }));
 
-vi.mock('../src/lib/queue.js', () => ({
+vi.mock('../../src/lib/queue.js', () => ({
   getEmailQueue: vi.fn(),
   enqueueConfirmationEmail: vi.fn().mockResolvedValue(undefined),
   enqueueTeamNotification: vi.fn().mockResolvedValue(undefined),
