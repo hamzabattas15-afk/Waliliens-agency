@@ -1493,7 +1493,7 @@ h2 em {
 .intro-gate.is-hidden {
   display: none;
 }
-body:has(.intro-gate) .site-header {
+body:has(.intro-gate:not(.is-hidden)) .site-header {
   opacity: 0;
   pointer-events: none;
 }

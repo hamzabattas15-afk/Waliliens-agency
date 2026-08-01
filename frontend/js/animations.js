@@ -205,63 +205,62 @@ window.addEventListener('load', () => {
       .from('.hero__copy, .hero__bottom', { y: 28, opacity: 0, duration: .4, stagger: .08, ease: 'power3.out' }, '-=.2');
   }
 
-  // Split section headings into word spans without changing their accessible text.
-  const splitHeading = heading => {
-    const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
-    const textNodes = [];
-    while (walker.nextNode()) textNodes.push(walker.currentNode);
-    textNodes.forEach(node => {
-      if (!node.nodeValue.trim()) return;
-      const fragment = document.createDocumentFragment();
-      node.nodeValue.split(/(\s+)/).forEach(token => {
-        if (/\s+/.test(token)) fragment.appendChild(document.createTextNode(token));
-        else { const word = document.createElement('span'); word.className = 'heading-word'; word.textContent = token; fragment.appendChild(word); }
+  const initPageAnimations = () => {
+    // Split section headings into word spans without changing their accessible text.
+    const splitHeading = heading => {
+      const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
+      const textNodes = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+      textNodes.forEach(node => {
+        if (!node.nodeValue.trim()) return;
+        const fragment = document.createDocumentFragment();
+        node.nodeValue.split(/(\s+)/).forEach(token => {
+          if (/\s+/.test(token)) fragment.appendChild(document.createTextNode(token));
+          else { const word = document.createElement('span'); word.className = 'heading-word'; word.textContent = token; fragment.appendChild(word); }
+        });
+        node.parentNode.replaceChild(fragment, node);
       });
-      node.parentNode.replaceChild(fragment, node);
+      return heading.querySelectorAll('.heading-word');
+    };
+
+    document.querySelectorAll('.section-heading h2, .process h2, .contact h2').forEach(heading => {
+      const words = splitHeading(heading);
+      gsap.from(words, { yPercent: 110, opacity: 0, stagger: .055, duration: .72, ease: 'power4.out', scrollTrigger: { trigger: heading, start: 'top 84%', once: true } });
     });
-    return heading.querySelectorAll('.heading-word');
+
+    const serviceGrid = document.querySelector('.service-grid');
+    if (serviceGrid) gsap.from('.service-card', { y: 70, opacity: 0, stagger: .18, duration: .85, ease: 'power3.out', scrollTrigger: { trigger: serviceGrid, start: 'top 82%', once: true } });
+
+    gsap.utils.toArray('.project__visual').forEach(visual => {
+      gsap.fromTo(visual, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 1.05, ease: 'power4.inOut', scrollTrigger: { trigger: visual, start: 'top 84%', once: true } });
+    });
+    const workGrid = document.querySelector('.work-grid');
+    if (workGrid) gsap.from('.project__meta', { y: 22, opacity: 0, stagger: .12, duration: .55, ease: 'power3.out', scrollTrigger: { trigger: workGrid, start: 'top 76%', once: true } });
+
+    if (canHover && !reducedMotion) {
+      document.querySelectorAll('.service-card').forEach(card => {
+        card.style.transformStyle = 'preserve-3d';
+        card.addEventListener('pointermove', event => {
+          const bounds = card.getBoundingClientRect();
+          const x = (event.clientX - bounds.left) / bounds.width - .5;
+          const y = (event.clientY - bounds.top) / bounds.height - .5;
+          gsap.to(card, { rotationY: x * 8, rotationX: y * -8, transformPerspective: 900, duration: .35, ease: 'power2.out', overwrite: 'auto' });
+        });
+        card.addEventListener('pointerleave', () => gsap.to(card, { rotationX: 0, rotationY: 0, duration: .6, ease: 'elastic.out(1, .45)' }));
+      });
+    }
+
+    gsap.utils.toArray('.process__intro, .steps article, .contact__grid > *').forEach(element => {
+      gsap.from(element, { y: 35, opacity: 0, duration: .75, ease: 'power3.out', scrollTrigger: { trigger: element, start: 'top 88%', once: true } });
+    });
+    ScrollTrigger.refresh();
   };
 
-  document.querySelectorAll('.section-heading h2, .process h2, .contact h2').forEach(heading => {
-    const words = splitHeading(heading);
-    gsap.from(words, {
-      yPercent: 110, opacity: 0, stagger: .055, duration: .72, ease: 'power4.out',
-      scrollTrigger: { trigger: heading, start: 'top 84%', once: true }
-    });
-  });
-
-  // Services enter in one staggered sequence when the section reaches view.
-  gsap.from('.service-card', {
-    y: 70, opacity: 0, stagger: .18, duration: .85, ease: 'power3.out',
-    scrollTrigger: { trigger: '.service-grid', start: 'top 82%', once: true }
-  });
-
-  // Portfolio visuals wipe in from a clipped state.
-  gsap.utils.toArray('.project__visual').forEach(visual => {
-    gsap.fromTo(visual, { clipPath: 'inset(0 100% 0 0)' }, {
-      clipPath: 'inset(0 0% 0 0)', duration: 1.05, ease: 'power4.inOut',
-      scrollTrigger: { trigger: visual, start: 'top 84%', once: true }
-    });
-  });
-  gsap.from('.project__meta', { y: 22, opacity: 0, stagger: .12, duration: .55, ease: 'power3.out', scrollTrigger: { trigger: '.work-grid', start: 'top 76%', once: true } });
-
-  // Subtle 3D card tilt, independent from ScrollTrigger's entrance transform.
-  if (canHover && !reducedMotion) {
-    document.querySelectorAll('.service-card').forEach(card => {
-      card.style.transformStyle = 'preserve-3d';
-      card.addEventListener('pointermove', event => {
-        const bounds = card.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / bounds.width - .5;
-        const y = (event.clientY - bounds.top) / bounds.height - .5;
-        gsap.to(card, { rotationY: x * 8, rotationX: y * -8, transformPerspective: 900, duration: .35, ease: 'power2.out', overwrite: 'auto' });
-      });
-      card.addEventListener('pointerleave', () => gsap.to(card, { rotationX: 0, rotationY: 0, duration: .6, ease: 'elastic.out(1, .45)' }));
-    });
-  }
-
-  gsap.utils.toArray('.process__intro, .steps article, .contact__grid > *').forEach(element => {
-    gsap.from(element, { y: 35, opacity: 0, duration: .75, ease: 'power3.out', scrollTrigger: { trigger: element, start: 'top 88%', once: true } });
-  });
-
-  ScrollTrigger.refresh();
+  window.WaliliensAnimations = {
+    refreshPage: () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      initPageAnimations();
+    }
+  };
+  initPageAnimations();
 });
