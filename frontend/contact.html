@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.1.13/lenis.min.js"></script>
@@ -53,7 +53,7 @@
             <div class="form-field"><input id="contact-email" type="email" name="email" placeholder=" " required /><label for="contact-email">Adresse e-mail</label></div>
             <div class="form-field form-field--select"><select id="contact-project" name="projectType" required><option value="" selected disabled></option><option value="web-development">Développement web</option><option value="ai-automation">Automatisation par IA</option><option value="both">Les deux</option></select><label for="contact-project">Type de projet</label></div>
             <div class="form-field form-field--message"><textarea id="contact-message" name="message" placeholder=" " required></textarea><label for="contact-message">Parlez-nous de votre projet</label></div>
-            <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" style="grid-column: span 2; margin-top: 10px;"></div>
+            <div class="cf-turnstile" style="grid-column: span 2; margin-top: 10px;"></div>
             <button class="button contact-submit" type="submit"><span class="button__label">Envoyer la demande</span><span class="button__arrow">↗</span><span class="button__spinner" aria-hidden="true"></span><span class="button__success" aria-hidden="true">✓</span></button>
             <p class="form-message" aria-live="polite"></p>
           </form>

@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { contactSchema } from './contact.schema.js';
-import { processContactSubmission } from './contact.service.js';
+import { processContactSubmission, verifyTurnstile } from './contact.service.js';
 import { AppError } from '../../middleware/errorHandler.js';
+import { env } from '../../config/env.js';
 
 /**
  * POST /api/contact
@@ -35,11 +36,10 @@ export async function submitContact(
 
     // Optional: Cloudflare Turnstile verification
     const turnstileToken = req.headers['cf-turnstile-response'] as string | undefined;
-    if (process.env.TURNSTILE_SECRET_KEY) {
+    if (env.TURNSTILE_SECRET_KEY) {
       if (!turnstileToken) {
         throw new AppError('Vérification CAPTCHA requise', 400, 'CAPTCHA_REQUIRED');
       }
-      const { verifyTurnstile } = await import('./contact.service.js');
       const ip = req.ip ?? '0.0.0.0';
       const valid = await verifyTurnstile(turnstileToken, ip);
       if (!valid) {

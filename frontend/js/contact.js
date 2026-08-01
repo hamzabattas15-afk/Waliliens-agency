@@ -1,3 +1,5 @@
+let turnstileWidgetId = null;
+
 async function submitForm(data) {
   const turnstileToken = data['cf-turnstile-response'];
   if (turnstileToken) delete data['cf-turnstile-response'];
@@ -29,10 +31,15 @@ function initContactPage() {
   if (!form || form.dataset.contactBound === 'true') return;
   form.dataset.contactBound = 'true';
 
-  // Turnstile only auto-renders during its initial page scan; a widget that
-  // arrived via PJAX after that scan must be rendered explicitly.
+  // The widget carries no site key in the markup (render=explicit mode), so it
+  // only renders when a key is actually configured — otherwise Turnstile stays
+  // fully inert and the form submits without a CAPTCHA step.
   const widget = form.querySelector('.cf-turnstile');
-  if (widget && !widget.hasChildNodes() && window.turnstile) window.turnstile.render(widget);
+  const siteKey = window.APP_CONFIG?.TURNSTILE_SITE_KEY;
+  turnstileWidgetId = null;
+  if (widget && siteKey && window.turnstile) {
+    turnstileWidgetId = window.turnstile.render(widget, { sitekey: siteKey });
+  }
 
   const button = form.querySelector('.contact-submit');
   const message = form.querySelector('.form-message');
@@ -60,6 +67,9 @@ function initContactPage() {
       button.disabled = false;
       message.textContent = error.message || 'Une erreur est survenue. Veuillez réessayer.';
       message.classList.add('is-error');
+      // A Turnstile token is single-use; without a reset the next attempt
+      // would silently fail CAPTCHA verification too.
+      window.turnstile?.reset(turnstileWidgetId ?? undefined);
     }
   });
 }
