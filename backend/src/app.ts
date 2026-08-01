@@ -140,49 +140,62 @@ export function createApp() {
   app.use('/api/admin/leads', leadsRouter);
   app.use('/api/admin/projects', adminProjectsRouter);
 
-  // ── OpenAPI / Swagger UI ──────────────────────────────────────────────────────
-  const swaggerSpec = swaggerJSDoc({
-    definition: {
-      openapi: '3.0.0',
-      info: {
-        title: 'Waliliens API',
-        version: '1.0.0',
-        description:
-          'Backend API for the Waliliens agency website. Handles contact form submissions, lead management, portfolio CMS, and admin authentication.',
-        contact: {
-          email: 'hello@waliliens.com',
+  // ── OpenAPI / Swagger UI (non-production only) ───────────────────────────────
+  // Interactive docs expose the full route/schema surface — not something to
+  // serve publicly in production. Skipping spec generation entirely there also
+  // avoids the glob scan below running in the shipped image.
+  if (env.NODE_ENV !== 'production') {
+    const swaggerSpec = swaggerJSDoc({
+      definition: {
+        openapi: '3.0.0',
+        info: {
+          title: 'Waliliens API',
+          version: '1.0.0',
+          description:
+            'Backend API for the Waliliens agency website. Handles contact form submissions, lead management, portfolio CMS, and admin authentication.',
+          contact: {
+            email: 'hello@waliliens.com',
+          },
         },
-      },
-      servers: [
-        {
-          url: `http://localhost:${env.PORT}`,
-          description: 'Local development',
-        },
-        {
-          url: 'https://api.waliliens.com',
-          description: 'Production',
-        },
-      ],
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
+        servers: [
+          {
+            url: `http://localhost:${env.PORT}`,
+            description: 'Local development',
+          },
+          {
+            url: 'https://api.waliliens.com',
+            description: 'Production',
+          },
+        ],
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: 'http',
+              scheme: 'bearer',
+              bearerFormat: 'JWT',
+            },
           },
         },
       },
-    },
-    apis: ['./src/modules/**/*.route.ts', './src/app.ts'],
-  });
+      // These globs are resolved relative to `process.cwd()`, not this file —
+      // they only find the @openapi JSDoc comments because the Dockerfile's
+      // runner stage copies the original src/ tree alongside dist/ (see
+      // backend/Dockerfile) AND the container's WORKDIR/CWD is the app root
+      // both hold. Running the compiled server with a different working
+      // directory, or dropping that src/ COPY, silently empties the docs
+      // (swagger-jsdoc finds no matches — it doesn't error) rather than
+      // failing loudly.
+      apis: ['./src/modules/**/*.route.ts', './src/app.ts'],
+    });
 
-  app.use(
-    '/api/docs',
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec, {
-      customSiteTitle: 'Waliliens API Docs',
-    })
-  );
+    app.use(
+      '/api/docs',
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec, {
+        customSiteTitle: 'Waliliens API Docs',
+      })
+    );
+  }
 
   // ── 404 handler ───────────────────────────────────────────────────────────────
   app.use((req: Request, res: Response) => {
