@@ -38,6 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return { mainNext, title: documentNext.title };
   };
 
+  // Keep the persistent header's current-page state in sync after a PJAX swap.
+  const updateActiveNavigation = url => {
+    const targetPath = new URL(url, window.location.href).pathname;
+    document.querySelectorAll('.navbar a[aria-current="page"]').forEach(link => link.removeAttribute('aria-current'));
+    document.querySelectorAll('.navbar a[href]').forEach(link => {
+      if (new URL(link.href, window.location.href).pathname === targetPath) link.setAttribute('aria-current', 'page');
+    });
+  };
+
   // 4. Run a cover → swap → reveal timeline, then update browser history.
   const navigate = async (url, pushState = true) => {
     if (isTransitioning) return;
@@ -52,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Replace page-specific content while keeping the shared header and footer in place.
       currentMain.replaceWith(mainNext);
       document.title = title;
+      updateActiveNavigation(url);
       window.scrollTo(0, 0);
       if (pushState) window.history.pushState({ url }, '', url);
 
