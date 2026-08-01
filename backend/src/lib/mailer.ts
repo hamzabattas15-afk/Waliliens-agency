@@ -34,7 +34,23 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
 
 // ─── Email templates ──────────────────────────────────────────────────────────
 
+const HTML_ESCAPES: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+// User-controlled values (name/email/message from the contact form, up to
+// 5000 chars) are interpolated raw into these HTML email templates — escape
+// before embedding to prevent HTML/script injection into the rendered email.
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char]);
+}
+
 export function buildConfirmationEmail(name: string): string {
+  const safeName = escapeHtml(name);
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -60,7 +76,7 @@ export function buildConfirmationEmail(name: string): string {
           <tr>
             <td style="padding:40px;background:#111118;border-left:1px solid #1e1e2e;border-right:1px solid #1e1e2e;">
               <p style="margin:0 0 20px;font-size:16px;color:#a0a0b8;line-height:1.7;">
-                Bonjour <strong style="color:#ffffff;">${name}</strong>,
+                Bonjour <strong style="color:#ffffff;">${safeName}</strong>,
               </p>
               <p style="margin:0 0 20px;font-size:16px;color:#a0a0b8;line-height:1.7;">
                 Merci pour votre message — nous l'avons bien reçu et nous vous répondrons <strong style="color:#8b7cf8;">sous deux jours ouvrés</strong>.
@@ -109,11 +125,17 @@ export function buildTeamNotificationEmail(data: {
     both: '🌐🤖 Les deux',
   };
 
+  const safeName = escapeHtml(data.name);
+  const safeEmail = escapeHtml(data.email);
+  // Escape first, then convert newlines — escaping after would double-encode
+  // the `<br/>` markup we just inserted.
+  const safeMessage = escapeHtml(data.message).replace(/\n/g, '<br/>');
+
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Nouveau lead — ${data.name}</title>
+  <title>Nouveau lead — ${safeName}</title>
 </head>
 <body style="margin:0;padding:0;background:#f4f4f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f8;padding:40px 20px;">
@@ -124,7 +146,7 @@ export function buildTeamNotificationEmail(data: {
             <td style="padding:32px 32px 24px;background:linear-gradient(135deg,#1a1a2e,#16213e);">
               <p style="margin:0;font-size:12px;letter-spacing:4px;color:#8b7cf8;font-weight:600;text-transform:uppercase;">WALILIENS / NOUVEAU LEAD</p>
               <h1 style="margin:12px 0 0;font-size:22px;color:#ffffff;font-weight:700;">
-                ${data.name} vient de soumettre une demande
+                ${safeName} vient de soumettre une demande
               </h1>
             </td>
           </tr>
@@ -134,7 +156,7 @@ export function buildTeamNotificationEmail(data: {
                 <tr>
                   <td style="padding:12px 16px;background:#f8f8fc;border-radius:8px;border-left:3px solid #8b7cf8;margin-bottom:12px;display:block;">
                     <p style="margin:0;font-size:12px;color:#8b7cf8;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Email</p>
-                    <p style="margin:4px 0 0;font-size:16px;color:#1a1a2e;font-weight:500;">${data.email}</p>
+                    <p style="margin:4px 0 0;font-size:16px;color:#1a1a2e;font-weight:500;">${safeEmail}</p>
                   </td>
                 </tr>
                 <tr><td style="height:12px;"></td></tr>
@@ -148,7 +170,7 @@ export function buildTeamNotificationEmail(data: {
                 <tr>
                   <td style="padding:16px;background:#f8f8fc;border-radius:8px;border-left:3px solid #4ecdc4;">
                     <p style="margin:0;font-size:12px;color:#4ecdc4;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Message</p>
-                    <p style="margin:8px 0 0;font-size:15px;color:#2a2a3e;line-height:1.6;">${data.message.replace(/\n/g, '<br/>')}</p>
+                    <p style="margin:8px 0 0;font-size:15px;color:#2a2a3e;line-height:1.6;">${safeMessage}</p>
                   </td>
                 </tr>
               </table>
