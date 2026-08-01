@@ -37,10 +37,12 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 
 ### 2. Run Infrastructure with Docker
 
-Start PostgreSQL and Redis:
+`backend/docker-compose.yml` only defines Postgres and Redis (published to the
+host) — it's dependencies for running the backend directly with `npm run dev`,
+not a full-stack file. Start them:
 
 ```bash
-docker compose up postgres redis -d
+docker compose up -d
 ```
 
 ### 3. Install Dependencies & Seed Database
@@ -68,21 +70,18 @@ Interactive API documentation is available at `http://localhost:3001/api/docs`.
 
 ## Running with Docker (Full Stack)
 
-To run the entire app (API + DB + Redis) inside Docker:
+The full stack (API + DB + Redis + frontend) is defined in the **repository
+root's** `docker-compose.yml`, not this directory's — `backend/docker-compose.yml`
+only has Postgres/Redis for local dev (see above). From the repo root:
 
 ```bash
-docker compose up -d
-docker compose run --rm migrate
-```
-
-From the repository root, use the full Docker setup to run the frontend too:
-
-```bash
-docker compose --profile migrate up --build migrate
+docker compose --profile migrate up --build migrate   # first run only
 docker compose up --build -d
 ```
 
-The frontend is served at `http://localhost:8080`.
+The frontend is served at `http://localhost:8080`, the API at `http://localhost:3001`.
+See the [root README](../README.md#docker-compose-setup) for why the two compose
+files are split this way.
 
 ---
 

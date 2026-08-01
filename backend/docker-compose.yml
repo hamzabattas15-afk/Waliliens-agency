@@ -1,3 +1,11 @@
+# Dev-only dependencies for running the backend directly on the host
+# (`npm run dev`). This intentionally does NOT define an `api` service — the
+# full stack (postgres + redis + api + frontend + migrate) lives in the root
+# ../docker-compose.yml. Keeping one API service definition avoids the two
+# files' NODE_ENV / build config silently drifting apart again — see the root
+# README for the full explanation.
+#
+# Usage: docker compose up -d   (from this directory)
 services:
   # ── PostgreSQL ──────────────────────────────────────────────────────────────
   postgres:
@@ -31,50 +39,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  # ── API ─────────────────────────────────────────────────────────────────────
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: runner
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      DATABASE_URL: postgresql://waliliens:waliliens_dev_pw@postgres:5432/waliliens_db
-      REDIS_URL: redis://redis:6379
-    ports:
-      - '3001:3001'
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://localhost:3001/api/health']
-      interval: 30s
-      timeout: 10s
-      start_period: 40s
-      retries: 3
-
-  # ── Prisma migrate + seed (one-shot) ────────────────────────────────────────
-  # Run manually: docker compose run --rm migrate
-  migrate:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: builder
-    env_file:
-      - .env
-    environment:
-      DATABASE_URL: postgresql://waliliens:waliliens_dev_pw@postgres:5432/waliliens_db
-    command: sh -c "npx prisma migrate deploy --schema=src/db/schema.prisma && npx tsx src/db/seed.ts"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    profiles:
-      - migrate
 
 volumes:
   postgres_data:

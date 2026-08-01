@@ -39,6 +39,12 @@ services:
       DATABASE_URL: postgresql://waliliens:waliliens_dev_pw@postgres:5432/waliliens_db
       REDIS_URL: redis://redis:6379
       ALLOWED_ORIGINS: http://localhost,http://127.0.0.1,http://localhost:8080,http://127.0.0.1:8080
+    # Published on the host so a locally-served frontend (e.g. Live Server on
+    # :5500, which points frontend/js/config.js at http://localhost:3001) can
+    # reach the API directly. In a real production deployment where nginx is
+    # the only public entry point and proxies to `api` over the internal
+    # Docker network, remove this mapping (or bind it to 127.0.0.1 only) so
+    # the API isn't reachable from outside the host.
     ports:
       - '3001:3001'
     depends_on:
