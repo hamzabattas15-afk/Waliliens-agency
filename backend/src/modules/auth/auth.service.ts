@@ -40,7 +40,7 @@ export async function loginUser(input: LoginInput): Promise<AuthTokens> {
     role: user.role,
   });
 
-  const refreshToken = signRefreshToken(user.id);
+  const refreshToken = signRefreshToken(user.id, user.tokenVersion);
 
   return {
     accessToken,
@@ -61,11 +61,15 @@ export async function refreshAccessToken(
 
   const user = await prisma.user.findUnique({
     where: { id: payload.sub },
-    select: { id: true, email: true, role: true },
+    select: { id: true, email: true, role: true, tokenVersion: true },
   });
 
   if (!user) {
     throw new AppError('User not found', 401, 'USER_NOT_FOUND');
+  }
+
+  if (user.tokenVersion !== payload.tokenVersion) {
+    throw new AppError('Refresh token has been revoked', 401, 'TOKEN_REVOKED');
   }
 
   const accessToken = signAccessToken({
@@ -75,4 +79,15 @@ export async function refreshAccessToken(
   });
 
   return { accessToken };
+}
+
+/**
+ * Bump the user's tokenVersion so every refresh token issued before this
+ * point (embedding the old version) fails verification in refreshAccessToken.
+ */
+export async function revokeRefreshTokens(userId: string): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { tokenVersion: { increment: 1 } },
+  });
 }

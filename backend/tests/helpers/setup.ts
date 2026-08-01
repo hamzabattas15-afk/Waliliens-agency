@@ -17,6 +17,7 @@ interface UserRecord {
   passwordHash: string;
   role: 'ADMIN' | 'VIEWER';
   name: string | null;
+  tokenVersion: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -100,6 +101,7 @@ const mockPrisma = {
         passwordHash: data.passwordHash,
         role: data.role ?? 'VIEWER',
         name: data.name ?? null,
+        tokenVersion: data.tokenVersion ?? 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -118,11 +120,24 @@ const mockPrisma = {
         passwordHash: create.passwordHash,
         role: create.role ?? 'VIEWER',
         name: create.name ?? null,
+        tokenVersion: create.tokenVersion ?? 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       dbState.users.push(newUser);
       return newUser;
+    }),
+    update: vi.fn(async ({ where, data }: any) => {
+      const item = dbState.users.find((u) =>
+        where.id ? u.id === where.id : u.email === where.email
+      );
+      if (!item) throw new Error('User not found');
+      const nextData = { ...data };
+      if (nextData.tokenVersion && typeof nextData.tokenVersion === 'object') {
+        nextData.tokenVersion = item.tokenVersion + (nextData.tokenVersion.increment ?? 0);
+      }
+      Object.assign(item, nextData, { updatedAt: new Date() });
+      return item;
     }),
     deleteMany: vi.fn(async (args?: any) => {
       if (args?.where?.email?.in) {

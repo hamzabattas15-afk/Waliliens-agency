@@ -218,6 +218,34 @@ describe('Auth flow', () => {
 
       expect(res.body.success).toBe(true);
     });
+
+    it('revokes the refresh token — refresh with it after logout returns 401', async () => {
+      const loginRes = await request(app)
+        .post('/api/auth/login')
+        .send({ email: 'test-admin@waliliens.com', password: 'TestPassword123!' });
+
+      const cookies = loginRes.headers['set-cookie'] as string[];
+      const refreshCookie = cookies.find((c: string) => c.startsWith('waliliens_refresh_token'));
+
+      // The refresh token still works before logout.
+      await request(app)
+        .post('/api/auth/refresh')
+        .set('Cookie', refreshCookie!)
+        .expect(200);
+
+      await request(app)
+        .post('/api/auth/logout')
+        .set('Cookie', refreshCookie!)
+        .expect(200);
+
+      const res = await request(app)
+        .post('/api/auth/refresh')
+        .set('Cookie', refreshCookie!)
+        .expect(401);
+
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.code).toBe('TOKEN_REVOKED');
+    });
   });
 
   void adminUserId; // used in setup

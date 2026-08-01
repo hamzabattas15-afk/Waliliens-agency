@@ -10,6 +10,7 @@ export interface AccessTokenPayload {
 
 export interface RefreshTokenPayload {
   sub: string;
+  tokenVersion: number;
   type: 'refresh';
 }
 
@@ -21,9 +22,9 @@ export function signAccessToken(payload: Omit<AccessTokenPayload, 'type'>): stri
   );
 }
 
-export function signRefreshToken(userId: string): string {
+export function signRefreshToken(userId: string, tokenVersion: number): string {
   return jwt.sign(
-    { sub: userId, type: 'refresh' },
+    { sub: userId, tokenVersion, type: 'refresh' },
     env.JWT_REFRESH_SECRET,
     { expiresIn: env.JWT_REFRESH_EXPIRES_IN as jwt.SignOptions['expiresIn'] }
   );
@@ -37,8 +38,11 @@ export function verifyAccessToken(token: string): AccessTokenPayload {
   return payload;
 }
 
-export function verifyRefreshToken(token: string): RefreshTokenPayload {
-  const payload = jwt.verify(token, env.JWT_REFRESH_SECRET) as RefreshTokenPayload;
+export function verifyRefreshToken(
+  token: string,
+  options?: jwt.VerifyOptions
+): RefreshTokenPayload {
+  const payload = jwt.verify(token, env.JWT_REFRESH_SECRET, options) as RefreshTokenPayload;
   if (payload.type !== 'refresh') {
     throw new Error('Invalid token type');
   }

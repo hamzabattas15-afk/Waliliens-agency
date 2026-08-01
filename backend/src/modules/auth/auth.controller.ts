@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { loginSchema } from './auth.schema.js';
-import { loginUser, refreshAccessToken } from './auth.service.js';
+import { loginUser, refreshAccessToken, revokeRefreshTokens } from './auth.service.js';
+import { verifyRefreshToken } from '../../lib/jwt.js';
 import { AppError } from '../../middleware/errorHandler.js';
 import { env } from '../../config/env.js';
 
@@ -72,8 +73,32 @@ export async function refresh(
 
 /**
  * POST /api/auth/logout
+ *
+ * Revokes every outstanding refresh token for this user (by bumping their
+ * tokenVersion), not just the one presented — so logout works even if the
+ * user has other sessions/devices with a refresh cookie they want revoked.
+ * A missing, invalid, or expired cookie is not an error: there's simply
+ * nothing to revoke, and logout must always succeed for the client.
  */
-export function logout(_req: Request, res: Response): void {
-  res.clearCookie(REFRESH_COOKIE_NAME, { path: '/api/auth' });
-  res.status(200).json({ success: true, message: 'Logged out successfully' });
+export async function logout(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME] as string | undefined;
+    if (refreshToken) {
+      try {
+        const payload = verifyRefreshToken(refreshToken, { ignoreExpiration: true });
+        await revokeRefreshTokens(payload.sub);
+      } catch {
+        // Invalid/forged/foreign-signature cookie — nothing to revoke.
+      }
+    }
+
+    res.clearCookie(REFRESH_COOKIE_NAME, { path: '/api/auth' });
+    res.status(200).json({ success: true, message: 'Logged out successfully' });
+  } catch (err) {
+    next(err);
+  }
 }
