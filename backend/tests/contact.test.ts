@@ -15,6 +15,7 @@ describe('POST /api/contact', () => {
     email: 'alice@example.com',
     projectType: 'web-development',
     message: 'Nous cherchons à refondre notre site e-commerce avec un focus sur les performances.',
+    consent: 'true',
   };
 
   it('201 — creates a lead for a valid payload', async () => {
@@ -30,6 +31,7 @@ describe('POST /api/contact', () => {
     expect(lead).not.toBeNull();
     expect(lead!.projectType).toBe('web_development');
     expect(lead!.status).toBe('new');
+    expect(lead!.consentAt).not.toBeNull();
   });
 
   it('201 — creates a lead for ai-automation project type', async () => {
@@ -85,6 +87,26 @@ describe('POST /api/contact', () => {
     const res = await request(app)
       .post('/api/contact')
       .send({ ...validPayload, message: 'Hi' })
+      .expect(422);
+
+    expect(res.body.success).toBe(false);
+  });
+
+  it('422 — rejects when consent is missing', async () => {
+    const { consent: _consent, ...noConsent } = validPayload;
+    const res = await request(app)
+      .post('/api/contact')
+      .send(noConsent)
+      .expect(422);
+
+    expect(res.body.success).toBe(false);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('422 — rejects when consent is false', async () => {
+    const res = await request(app)
+      .post('/api/contact')
+      .send({ ...validPayload, consent: 'false' })
       .expect(422);
 
     expect(res.body.success).toBe(false);

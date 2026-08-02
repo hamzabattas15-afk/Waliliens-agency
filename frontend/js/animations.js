@@ -138,14 +138,6 @@ window.addEventListener('load', () => {
   if (!window.gsap || !window.ScrollTrigger) return;
   gsap.registerPlugin(ScrollTrigger);
 
-  // Lenis and ScrollTrigger share the same animation frame/ticker.
-  if (window.Lenis) {
-    const lenis = new Lenis({ lerp: .09, smoothWheel: true });
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add(time => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
-  }
-
   const preloader = document.querySelector('.preloader');
   const counter = { value: 0 };
   const introGate = document.querySelector('.intro-gate');
@@ -157,7 +149,7 @@ window.addEventListener('load', () => {
   } catch (error) {
     introAlreadySeen = false;
   }
-  const introShouldPlay = !introAlreadySeen && !reducedMotion;
+  const introShouldPlay = !introAlreadySeen && !reducedMotion && !!(introGate && preloader);
   const finishIntro = () => {
     try { window.sessionStorage.setItem('waliliens-intro-seen', 'true'); } catch (error) {}
     introGate?.classList.add('is-hidden');

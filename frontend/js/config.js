@@ -1,3 +1,13 @@
+// Opening these files directly as file:// (no local server) leaves
+// window.location.hostname empty, so API_BASE_URL below would resolve to ''
+// and every fetch would hit a nonexistent relative path on disk.
+if (window.location.protocol === 'file:') {
+  console.warn(
+    'Waliliens: this page was opened via file://, so API calls will fail. ' +
+    'Serve the frontend/ directory over HTTP (e.g. `npx http-server` or `python3 -m http.server`) instead.'
+  );
+}
+
 window.APP_CONFIG = {
   // Use relative path for same-domain deployment, or absolute URL for external API
   API_BASE_URL:

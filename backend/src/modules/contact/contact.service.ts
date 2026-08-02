@@ -60,6 +60,9 @@ export async function processContactSubmission(
     utmMedium: input.utm_medium,
     utmCampaign: input.utm_campaign,
     referer,
+    // Schema validation already requires consent === 'true', so reaching
+    // this point means consent was given at request time.
+    consentAt: new Date(),
   });
 
   logger.info(

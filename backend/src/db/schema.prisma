@@ -64,6 +64,10 @@ model Lead {
   utmCampaign String?
   referer     String?
 
+  // Proof of consent to the privacy policy, given via the contact form's
+  // required checkbox — null if the lead predates the checkbox.
+  consentAt   DateTime?
+
   // Email job tracking
   confirmationSentAt DateTime?
   teamNotifiedAt     DateTime?

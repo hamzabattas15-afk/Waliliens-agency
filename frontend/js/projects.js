@@ -26,14 +26,28 @@ if (document.readyState === 'loading') {
 }
 document.addEventListener('waliliens:pjax', initProjectsPage);
 
+// Only http(s) URLs are allowed; the result is escaped for use inside a
+// double-quoted CSS url("...") value (CSS.escape is for identifiers, not URLs).
+function getSafeImageUrl(imageUrl) {
+  if (!imageUrl) return null;
+  try {
+    const parsed = new URL(imageUrl, window.location.href);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+    return parsed.href.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  } catch {
+    return null;
+  }
+}
+
 function createProjectCard(project, index, visualClasses) {
   const card = document.createElement('article');
   card.className = `project${index === 0 ? ' project--large' : ''}`;
 
   const visual = document.createElement('div');
   visual.className = `project__visual ${visualClasses[index % visualClasses.length]}`;
-  if (project.imageUrl) {
-    visual.style.backgroundImage = `linear-gradient(rgba(10, 15, 44, .2), rgba(10, 15, 44, .55)), url("${CSS.escape(project.imageUrl)}")`;
+  const safeImageUrl = getSafeImageUrl(project.imageUrl);
+  if (safeImageUrl) {
+    visual.style.backgroundImage = `linear-gradient(rgba(10, 15, 44, .2), rgba(10, 15, 44, .55)), url("${safeImageUrl}")`;
     visual.style.backgroundSize = 'cover';
     visual.style.backgroundPosition = 'center';
   }

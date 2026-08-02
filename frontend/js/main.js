@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('.site-header');
   const toggle = document.querySelector('.menu-toggle');
   const links = document.querySelector('.nav-links');
+  if (!header || !toggle || !links) return;
   window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 24));
   toggle.addEventListener('click', () => {
     const open = links.classList.toggle('is-open');

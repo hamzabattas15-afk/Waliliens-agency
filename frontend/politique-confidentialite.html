@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Politique de confidentialité Waliliens : données collectées via le formulaire de contact, base légale, durée de conservation et droits RGPD." />
+    <link rel="canonical" href="https://waliliens.com/politique-confidentialite.html" />
+    <link rel="icon" type="image/svg+xml" href="images/logo-mark.svg" />
+    <link rel="apple-touch-icon" href="images/logo-mark.png" />
+    <title>Politique de confidentialité - Waliliens</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/animations.js" defer></script>
+    <script src="js/transitions.js" defer></script>
+  </head>
+  <body class="legal-page">
+    <div class="cursor-dot" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <nav class="navbar container" aria-label="Navigation principale">
+        <a class="logo" href="index.html#top" aria-label="Accueil de Waliliens"><span class="logo-badge"><img src="images/logo-mark.png" srcset="images/logo-mark.png 1x, images/logo-mark.svg 1x" alt="Waliliens" loading="eager" decoding="async" width="430" height="300" /></span></a>
+        <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-links"><span></span><span></span></button>
+        <div class="nav-links" id="nav-links">
+          <a href="services.html">Services</a>
+          <a href="process.html">Méthode</a>
+          <a href="work.html">Projets</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <a class="button button--small nav-cta" href="contact.html">Démarrer un projet <span>↗</span></a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="section" id="politique-confidentialite">
+        <div class="container legal-content">
+          <div class="section-heading">
+            <p class="eyebrow">Vie privée</p>
+            <h2>Politique de confidentialité</h2>
+          </div>
+
+          <div class="legal-notice">
+            <strong>À l'attention de l'éditeur du site :</strong> ce texte a été rédigé automatiquement à partir des champs réellement collectés dans le code du formulaire de contact et de la base de données (modèle <code>Lead</code>). Il n'a pas été relu par un professionnel du droit et doit être validé par un avocat ou un délégué à la protection des données avant mise en ligne — en particulier la base légale retenue pour chaque traitement (section 4) et la durée de conservation (section 5), marquée <span class="legal-placeholder">[À COMPLÉTER]</span>.
+          </div>
+
+          <h3>1. Qui est responsable du traitement ?</h3>
+          <p>
+            Le responsable du traitement des données collectées sur ce site est :<br />
+            <span class="legal-placeholder">[À COMPLÉTER — raison sociale et adresse]</span><br />
+            Contact : <a href="mailto:hello@waliliens.com">hello@waliliens.com</a>
+          </p>
+
+          <h3>2. Quelles données sont collectées ?</h3>
+          <p>Le seul point de collecte de données personnelles sur ce site est le formulaire de contact. Les champs suivants correspondent exactement au modèle <code>Lead</code> de notre base de données :</p>
+
+          <table>
+            <thead>
+              <tr><th>Donnée</th><th>Origine</th><th>Détail</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Nom</td><td>Saisie par le visiteur</td><td>Champ obligatoire du formulaire.</td></tr>
+              <tr><td>Adresse e-mail</td><td>Saisie par le visiteur</td><td>Champ obligatoire, utilisé pour vous répondre.</td></tr>
+              <tr><td>Type de projet</td><td>Saisie par le visiteur</td><td>Développement web, automatisation IA, ou les deux.</td></tr>
+              <tr><td>Message</td><td>Saisie par le visiteur</td><td>Champ libre décrivant votre demande.</td></tr>
+              <tr><td>Date de consentement</td><td>Générée à l'envoi</td><td>Horodatage de l'acceptation de la présente politique via la case à cocher obligatoire du formulaire, conservé comme preuve de consentement.</td></tr>
+              <tr><td>Adresse IP</td><td>Collectée automatiquement (en-tête HTTP)</td><td>Jamais stockée en clair : uniquement un hachage SHA-256 salé, à sens unique, qui ne permet pas de retrouver l'adresse IP d'origine.</td></tr>
+              <tr><td>User-agent</td><td>Collecté automatiquement (en-tête HTTP)</td><td>Navigateur et système d'exploitation utilisés, à des fins de lutte anti-spam.</td></tr>
+              <tr><td>Page de provenance (referer)</td><td>Collecté automatiquement (en-tête HTTP)</td><td>URL depuis laquelle le formulaire a été soumis.</td></tr>
+              <tr><td>Paramètres UTM</td><td>Collectés automatiquement (URL)</td><td>Source, support et campagne marketing, si présents dans le lien suivi par le visiteur.</td></tr>
+              <tr><td>Statut de traitement</td><td>Généré en interne</td><td>Suivi commercial interne de la demande (nouveau, contacté, qualifié, clôturé) — non fourni par le visiteur.</td></tr>
+            </tbody>
+          </table>
+
+          <p>Un champ « piège à robots » (invisible pour un visiteur humain) est également présent dans le formulaire à des fins anti-spam : s'il est rempli, la demande est silencieusement ignorée et <strong>n'est jamais enregistrée</strong> en base de données.</p>
+
+          <h3>3. Pourquoi ces données sont-elles collectées ?</h3>
+          <ul>
+            <li>Répondre à votre demande de contact ou de devis ;</li>
+            <li>Assurer le suivi commercial de votre demande ;</li>
+            <li>Lutter contre les soumissions frauduleuses ou automatisées (spam) ;</li>
+            <li>Mesurer l'origine des demandes à des fins statistiques internes (paramètres UTM).</li>
+          </ul>
+
+          <h3>4. Sur quelle base légale ?</h3>
+          <p><span class="legal-placeholder">[À VALIDER PAR UN PROFESSIONNEL]</span> — à titre indicatif :</p>
+          <ul>
+            <li><strong>Exécution de mesures précontractuelles</strong> prises à votre demande (article 6.1.b du RGPD) pour le traitement de votre nom, e-mail, type de projet et message ;</li>
+            <li><strong>Intérêt légitime</strong> (article 6.1.f du RGPD) pour les données techniques (IP hachée, user-agent, referer, UTM) collectées à des fins de sécurité et de lutte anti-spam ;</li>
+            <li><strong>Consentement</strong> (article 6.1.a du RGPD), matérialisé par la case à cocher obligatoire du formulaire, dont la date est conservée comme preuve.</li>
+          </ul>
+
+          <h3>5. Combien de temps ces données sont-elles conservées ?</h3>
+          <p>Durée de conservation : <span class="legal-placeholder">[À COMPLÉTER]</span>.</p>
+
+          <h3>6. Qui a accès à ces données ?</h3>
+          <p>Vos données sont traitées en interne par l'équipe Waliliens. Elles sont également transmises aux sous-traitants suivants, strictement nécessaires au fonctionnement du formulaire de contact :</p>
+          <ul>
+            <li><strong>Resend</strong> — service d'envoi des e-mails transactionnels (confirmation de votre demande et notification interne à l'équipe). <span class="legal-placeholder">[À VÉRIFIER : localisation des serveurs de Resend et, le cas échéant, clauses contractuelles types encadrant un transfert hors UE]</span> ;</li>
+            <li><strong>Cloudflare Turnstile</strong> — vérification anti-spam du formulaire de contact, lorsqu'elle est activée.</li>
+          </ul>
+          <p>Ce site n'utilise pas Google Fonts ni aucun autre service de mesure d'audience ou de publicité : les polices de caractères sont hébergées directement sur notre propre serveur, et aucune donnée de navigation n'est transmise à un tiers à ce titre.</p>
+
+          <h3>7. Comment vos données sont-elles sécurisées ?</h3>
+          <p>Les échanges avec le site sont chiffrés (HTTPS). Votre adresse IP n'est jamais conservée en clair : seule une empreinte SHA-256 salée, non réversible, est stockée. Les mots de passe des comptes administrateurs sont hachés avec l'algorithme Argon2id.</p>
+
+          <h3>8. Quels sont vos droits ?</h3>
+          <p>Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi « Informatique et Libertés », vous disposez des droits suivants sur vos données personnelles : accès, rectification, effacement, limitation du traitement, opposition et portabilité.</p>
+          <p>Pour exercer l'un de ces droits, contactez-nous à l'adresse <a href="mailto:hello@waliliens.com">hello@waliliens.com</a> en précisant votre nom et votre adresse e-mail. Nous nous engageons à répondre dans un délai d'un mois.</p>
+          <p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez introduire une réclamation auprès de la Commission Nationale de l'Informatique et des Libertés (CNIL) :<br />3 Place de Fontenoy — TSA 80715 — 75334 PARIS CEDEX 07 — <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a></p>
+
+          <h3>9. Cookies</h3>
+          <p>Ce site n'utilise pas de cookies de mesure d'audience ou de publicité. Le composant de vérification anti-spam (Cloudflare Turnstile), lorsqu'il est activé sur le formulaire de contact, peut déposer des cookies ou utiliser un stockage technique nécessaire à son fonctionnement, sous la responsabilité de Cloudflare.</p>
+
+          <h3>10. Modifications de la présente politique</h3>
+          <p>Cette politique de confidentialité peut être modifiée à tout moment, notamment pour se conformer à toute évolution réglementaire, jurisprudentielle ou technique. La date de dernière mise à jour figure ci-dessous.</p>
+          <p><em>Dernière mise à jour : <span class="legal-placeholder">[À COMPLÉTER]</span></em></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__top">
+        <a class="logo" href="index.html#top" aria-label="Accueil de Waliliens"><span class="logo-badge"><img src="images/logo-mark.png" alt="Waliliens" loading="lazy" decoding="async" width="430" height="300" /></span></a>
+        <p>Développement web &amp; automatisation par IA<br />pour les entreprises tournées vers l'avenir.</p>
+      </div>
+      <div class="container footer__bottom">
+        <p>© 2026 Waliliens. Tous droits réservés.</p>
+        <p class="footer__legal-links"><a href="mentions-legales.html">Mentions légales</a> · <a href="politique-confidentialite.html" aria-current="page">Politique de confidentialité</a></p>
+        <a href="#top">Retour en haut ↑</a>
+      </div>
+    </footer>
+  </body>
+</html>

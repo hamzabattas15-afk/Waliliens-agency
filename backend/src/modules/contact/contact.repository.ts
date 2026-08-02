@@ -12,6 +12,7 @@ export interface CreateLeadData {
   utmMedium?: string;
   utmCampaign?: string;
   referer?: string;
+  consentAt?: Date;
 }
 
 export async function createLead(data: CreateLeadData) {
@@ -28,6 +29,7 @@ export async function createLead(data: CreateLeadData) {
       utmMedium: data.utmMedium,
       utmCampaign: data.utmCampaign,
       referer: data.referer,
+      consentAt: data.consentAt,
     },
     select: {
       id: true,

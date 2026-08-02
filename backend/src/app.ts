@@ -36,15 +36,13 @@ export function createApp() {
           defaultSrc: ["'self'"],
           scriptSrc: [
             "'self'",
-            'https://cdnjs.cloudflare.com', // GSAP + Lenis
+            'https://cdnjs.cloudflare.com', // GSAP
             'https://challenges.cloudflare.com', // Turnstile
           ],
-          styleSrc: [
-            "'self'",
-            "'unsafe-inline'",
-            'https://fonts.googleapis.com',
-          ],
-          fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          // Fonts are self-hosted under frontend/fonts/ (see
+          // politique-confidentialite.html) — no fonts.gstatic.com needed.
+          fontSrc: ["'self'"],
           imgSrc: ["'self'", 'data:', 'https:'],
           connectSrc: ["'self'"],
           frameSrc: ['https://challenges.cloudflare.com'], // Turnstile iframe

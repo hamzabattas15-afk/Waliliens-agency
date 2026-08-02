@@ -1,3 +1,43 @@
+/* Self-hosted fonts (were loaded from fonts.googleapis.com/fonts.gstatic.com,
+   which sends every visitor's IP to Google on first paint — see
+   politique-confidentialite.html). Both files are variable fonts covering the
+   400–700 weight range used across the site and the admin dashboard, so one
+   @font-face per subset is enough. Latin-ext is kept alongside latin for
+   accented characters outside the Latin-1 range; cyrillic/greek/vietnamese
+   subsets were dropped since the site is French-only. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/inter-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/space-grotesk-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/space-grotesk-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 :root {
   --navy-deep: #111629;
   --electric-blue: #3b5fe0;
@@ -782,6 +822,29 @@ h2 em {
 .form-message {
   grid-column: span 2;
 }
+.consent-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  grid-column: span 2;
+  color: #9da8c4;
+  font-size: 12.5px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.consent-field input[type="checkbox"] {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: var(--cyan-accent);
+  cursor: pointer;
+}
+.consent-field a {
+  color: var(--cyan-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .form-field input,
 .form-field select,
 .form-field textarea {
@@ -929,10 +992,85 @@ h2 em {
 .footer__bottom {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 24px;
   padding-top: 18px;
   border-top: 1px solid rgba(94, 234, 212, 0.14);
   color: var(--text-gray);
   font-size: 11px;
+}
+.footer__legal-links a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ─── Legal pages (mentions-legales.html, politique-confidentialite.html) ─── */
+.legal-content {
+  max-width: 46rem;
+}
+.legal-content h3 {
+  margin: 48px 0 14px;
+  font-size: 20px;
+}
+.legal-content h3:first-child {
+  margin-top: 0;
+}
+.legal-content p,
+.legal-content li {
+  color: var(--text-gray);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.legal-content p + p {
+  margin-top: 14px;
+}
+.legal-content ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+.legal-content li {
+  margin-bottom: 6px;
+}
+.legal-content a {
+  color: var(--cyan-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.legal-content strong {
+  color: var(--white);
+}
+.legal-content table {
+  width: 100%;
+  margin: 14px 0;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.legal-content th,
+.legal-content td {
+  padding: 10px 12px;
+  border: 1px solid rgba(94, 234, 212, 0.18);
+  text-align: left;
+  vertical-align: top;
+}
+.legal-content th {
+  color: var(--white);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+}
+.legal-placeholder {
+  color: #fbbf24;
+  font-weight: 700;
+}
+.legal-notice {
+  margin-bottom: 40px;
+  padding: 16px 20px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 8px;
+  background: rgba(251, 191, 36, 0.08);
+  color: #fde68a;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 @keyframes button-spin {
@@ -1109,6 +1247,7 @@ h2 em {
     grid-template-columns: 1fr;
   }
   .form-field--message,
+  .consent-field,
   .contact-submit,
   .form-message {
     grid-column: 1;

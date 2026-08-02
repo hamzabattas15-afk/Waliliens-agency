@@ -20,7 +20,7 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required: [name, email, projectType, message]
+ *             required: [name, email, projectType, message, consent]
  *             properties:
  *               name:
  *                 type: string
@@ -40,6 +40,10 @@ const router = Router();
  *                 minLength: 10
  *                 maxLength: 5000
  *                 example: Nous cherchons à refondre notre site e-commerce.
+ *               consent:
+ *                 type: string
+ *                 enum: ['true']
+ *                 description: Must be the literal string "true" — confirms the visitor accepted the privacy policy.
  *               _hp:
  *                 type: string
  *                 description: Honeypot field — must be empty. Leave this field out.
