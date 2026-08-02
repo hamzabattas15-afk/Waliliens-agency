@@ -7,21 +7,53 @@ document.addEventListener('DOMContentLoaded', () => {
   // Stop gracefully if GSAP is unavailable; ordinary links will still work.
   if (!window.gsap) return;
 
+  // Scrolls to the target URL's #hash if present (e.g. a homepage card
+  // linking to services.html#offers), else to the top — mirroring what a
+  // real navigation would do natively, since a PJAX swap never triggers the
+  // browser's own scroll-to-fragment behaviour. Prefers animations.js's
+  // scrollToHash (it also accounts for the fixed .site-header and re-runs
+  // after ScrollTrigger.refresh(), which resets scroll as a side effect of
+  // recalculating trigger positions — see refreshPage() below); falls back
+  // to a plain scrollIntoView if animations.js didn't load for some reason.
+  const scrollToHashOrTop = hash => {
+    if (window.WaliliensAnimations?.scrollToHash) { window.WaliliensAnimations.scrollToHash(hash); return; }
+    const target = hash && document.querySelector(hash);
+    if (target) target.scrollIntoView();
+    else window.scrollTo(0, 0);
+  };
+
   // 1. Create the full-screen navy panel used as the transition wipe.
   const wipe = document.createElement('div');
   wipe.className = 'page-wipe';
   wipe.setAttribute('aria-hidden', 'true');
   Object.assign(wipe.style, {
     position: 'fixed', inset: '0', zIndex: '1000',
-    background: '#0A0F2C', transform: 'translateY(100%)', pointerEvents: 'none'
+    background: '#0A0F2C', pointerEvents: 'none'
   });
   document.body.appendChild(wipe);
+  // Set the initial offset through GSAP rather than a literal `transform:
+  // translateY(100%)` string — GSAP's yPercent tweens don't fully overwrite
+  // a pre-existing, non-GSAP-authored transform, so the cover/reveal tweens
+  // below ended up stacking their own translate() on top of the leftover
+  // instead of replacing it (net effect: the "reveal" tween's translateY
+  // cancelled back out to ~0 right as it finished, briefly re-covering the
+  // freshly swapped page before the following gsap.set snapped it away).
+  gsap.set(wipe, { yPercent: 100 });
 
   let isTransitioning = false;
 
   // 2. Only intercept normal, same-origin navigations to another HTML document.
   const isTransitionLink = (link, event) => {
     if (!link || link.target === '_blank' || link.hasAttribute('download')) return false;
+    // Opt-out for links that must always produce a real, fresh navigation
+    // instead of a PJAX main-swap — currently just links targeting
+    // index.html itself (header/footer logo, 404's "Retour à l'accueil"):
+    // see preparePjaxMain below — PJAX'ing to index.html silently strips the
+    // intro gate and marks it "seen", so a PJAX'd home differs from actually
+    // loading the home page. (Links with a #hash into the OTHER page, e.g.
+    // the homepage's service cards linking to services.html#offers, don't
+    // need this — scrollToHashOrTop below handles those through PJAX too.)
+    if (link.hasAttribute('data-no-transition')) return false;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
     const url = new URL(link.href, window.location.href);
     if (url.pathname === window.location.pathname && url.hash) return false;
@@ -127,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.className = documentNext.body.className;
       document.title = title;
       updateActiveNavigation(url);
-      window.scrollTo(0, 0);
+      scrollToHashOrTop(new URL(url, window.location.href).hash);
       if (pushState) window.history.pushState({ url }, '', url);
 
       // Run the target page's own scripts, then tell already-loaded page

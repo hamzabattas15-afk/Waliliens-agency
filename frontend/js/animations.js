@@ -3,6 +3,24 @@ window.addEventListener('load', () => {
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reducedMotion;
 
+  // Scrolls to the element referenced by a URL hash (e.g. "#offers"),
+  // falling back to the top of the page, and subtracting the fixed
+  // .site-header's height so the target isn't left hidden underneath it.
+  // Every ScrollTrigger.refresh() call below resets the scroll position to
+  // 0 as a side effect of recalculating trigger start/end positions against
+  // the fully-settled layout — that recalculation is exactly what refresh()
+  // is for and must still happen, but its side effect undoes the browser's
+  // native scroll-to-fragment on a real page load (or transitions.js's PJAX
+  // scroll handling). Call this right after every refresh() to restore the
+  // intended position, not to replace what refresh() itself does.
+  const scrollToHash = hash => {
+    const target = hash && document.querySelector(hash);
+    if (!target) { window.scrollTo(0, 0); return; }
+    const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+    window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' });
+  };
+
   const globeDots = document.querySelector('.globe-dots');
   if (globeDots) {
     const fragment = document.createDocumentFragment();
@@ -157,6 +175,7 @@ window.addEventListener('load', () => {
     document.querySelector('.site-header')?.style.setProperty('opacity', '1');
     document.querySelector('.site-header')?.style.setProperty('pointer-events', 'auto');
     ScrollTrigger.refresh();
+    scrollToHash(window.location.hash);
   };
 
   if (introSkipButton) {
@@ -172,6 +191,7 @@ window.addEventListener('load', () => {
     document.querySelector('.site-header')?.style.setProperty('opacity', '1');
     document.querySelector('.site-header')?.style.setProperty('pointer-events', 'auto');
     ScrollTrigger.refresh();
+    scrollToHash(window.location.hash);
   } else {
     introTimeline = gsap.timeline();
     gsap.from('.intro-gate__caption', { y: 10, opacity: 0, duration: .45, delay: .15, ease: 'power3.out' });
@@ -246,13 +266,15 @@ window.addEventListener('load', () => {
       gsap.from(element, { y: 35, opacity: 0, duration: .75, ease: 'power3.out', scrollTrigger: { trigger: element, start: 'top 88%', once: true } });
     });
     ScrollTrigger.refresh();
+    scrollToHash(window.location.hash);
   };
 
   window.WaliliensAnimations = {
     refreshPage: () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
       initPageAnimations();
-    }
+    },
+    scrollToHash,
   };
   initPageAnimations();
 });
