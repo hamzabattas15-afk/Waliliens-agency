@@ -10,9 +10,9 @@ window.addEventListener('load', () => {
   // 0 as a side effect of recalculating trigger start/end positions against
   // the fully-settled layout — that recalculation is exactly what refresh()
   // is for and must still happen, but its side effect undoes the browser's
-  // native scroll-to-fragment on a real page load (or transitions.js's PJAX
-  // scroll handling). Call this right after every refresh() to restore the
-  // intended position, not to replace what refresh() itself does.
+  // native scroll-to-fragment on a real page load. Call this right after
+  // every refresh() to restore the intended position, not to replace what
+  // refresh() itself does.
   const scrollToHash = hash => {
     const target = hash && document.querySelector(hash);
     if (!target) { window.scrollTo(0, 0); return; }
@@ -269,12 +269,5 @@ window.addEventListener('load', () => {
     scrollToHash(window.location.hash);
   };
 
-  window.WaliliensAnimations = {
-    refreshPage: () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      initPageAnimations();
-    },
-    scrollToHash,
-  };
   initPageAnimations();
 });
