@@ -13,6 +13,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    # Expose to host only in dev mode (docker compose --profile dev up -d postgres redis)
+    # so `npm run dev` on the host can reach localhost:5432.
+    profiles: []
+    ports:
+      - '5432:5432'
 
   redis:
     image: redis:7-alpine
@@ -25,6 +30,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    # Expose to host only in dev mode (docker compose --profile dev up -d postgres redis)
+    # so `npm run dev` on the host can reach localhost:6379.
+    profiles: []
+    ports:
+      - '6379:6379'
 
   api:
     build:
