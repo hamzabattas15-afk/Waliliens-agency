@@ -3,26 +3,32 @@ window.addEventListener('load', () => {
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reducedMotion;
 
-  const globeDots = document.querySelector('.globe-dots');
-  if (globeDots) {
-    const fragment = document.createDocumentFragment();
-    for (let index = 0; index < 26; index += 1) {
-      const latitude = (-58 + (index * 37) % 116) * Math.PI / 180;
-      const longitude = (index * 137.5) * Math.PI / 180;
-      const radius = Math.cos(latitude) * 174;
-      const x = Math.cos(longitude) * radius;
-      const y = Math.sin(latitude) * 174;
-      const z = Math.sin(longitude) * radius;
-      const dot = document.createElement('b');
-      dot.className = 'globe-dot';
-      dot.style.setProperty('--dot-transform', `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,${z.toFixed(1)}px)`);
-      dot.style.setProperty('--dot-size', `${(2 + (index % 3) * .7).toFixed(1)}px`);
-      dot.style.opacity = (0.32 + ((z + 174) / 348) * .62).toFixed(2);
-      dot.style.animationDelay = `${-(index * .17).toFixed(2)}s`;
-      fragment.appendChild(dot);
-    }
-    globeDots.appendChild(fragment);
-  }
+  // Scene decoration is idempotent so it can run again after a PJAX swap brings
+  // in a fresh <main> (for example the home intro gate and its starfield).
+  const buildGlobeDots = () => {
+    document.querySelectorAll('.globe-dots').forEach(globeDots => {
+      if (globeDots.children.length) return;
+      const fragment = document.createDocumentFragment();
+      for (let index = 0; index < 26; index += 1) {
+        const latitude = (-58 + (index * 37) % 116) * Math.PI / 180;
+        const longitude = (index * 137.5) * Math.PI / 180;
+        const radius = Math.cos(latitude) * 174;
+        const x = Math.cos(longitude) * radius;
+        const y = Math.sin(latitude) * 174;
+        const z = Math.sin(longitude) * radius;
+        const dot = document.createElement('b');
+        dot.className = 'globe-dot';
+        dot.style.setProperty('--dot-transform', `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,${z.toFixed(1)}px)`);
+        dot.style.setProperty('--dot-size', `${(2 + (index % 3) * .7).toFixed(1)}px`);
+        dot.style.opacity = (0.32 + ((z + 174) / 348) * .62).toFixed(2);
+        dot.style.animationDelay = `${-(index * .17).toFixed(2)}s`;
+        fragment.appendChild(dot);
+      }
+      globeDots.appendChild(fragment);
+    });
+  };
+
+  buildGlobeDots();
 
   // Keep the page usable when the GSAP CDN is unavailable.
   if (!window.gsap) {
@@ -61,10 +67,13 @@ window.addEventListener('load', () => {
     button.addEventListener('pointerleave', () => { button.style.transform = ''; });
   });
 
-  // Build a lightweight starfield once. CSS handles every twinkle afterwards;
-  // pointer movement updates only the layer transform rather than every star.
-  const starfields = document.querySelectorAll('.starfield');
-  if (starfields.length && !reducedMotion) {
+  // Build a lightweight starfield. CSS handles every twinkle afterwards; pointer
+  // movement updates only the layer transform rather than every star. Skips
+  // already-populated layers so it is safe to call again after a PJAX swap.
+  const buildStarfields = () => {
+    if (reducedMotion) return;
+    const starfields = [...document.querySelectorAll('.starfield')].filter(field => !field.children.length);
+    if (!starfields.length) return;
     const stars = document.createDocumentFragment();
     const colors = ['#F1F3F9', '#5EEAD4', '#3B5FE0'];
     for (let index = 0; index < 130; index += 1) {
@@ -79,17 +88,22 @@ window.addEventListener('load', () => {
       stars.appendChild(star);
     }
     starfields.forEach(starfield => starfield.appendChild(stars.cloneNode(true)));
-    if (canHover && !isMobile) {
-      const scene = document.querySelector('.intro-gate');
-      scene.addEventListener('pointermove', event => {
-        const bounds = scene.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / bounds.width - .5;
-        const y = (event.clientY - bounds.top) / bounds.height - .5;
-        starfields.forEach(starfield => { starfield.style.transform = `translate3d(${x * -13}px, ${y * -10}px, 0)`; });
-      });
-      scene.addEventListener('pointerleave', () => starfields.forEach(starfield => { starfield.style.transform = ''; }));
-    }
-  }
+
+    // Parallax is driven by the gate; pages without one just get static stars.
+    const scene = document.querySelector('.intro-gate');
+    if (!scene || !canHover || isMobile || scene.dataset.parallaxBound === 'true') return;
+    scene.dataset.parallaxBound = 'true';
+    const layers = () => document.querySelectorAll('.starfield');
+    scene.addEventListener('pointermove', event => {
+      const bounds = scene.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width - .5;
+      const y = (event.clientY - bounds.top) / bounds.height - .5;
+      layers().forEach(starfield => { starfield.style.transform = `translate3d(${x * -13}px, ${y * -10}px, 0)`; });
+    });
+    scene.addEventListener('pointerleave', () => layers().forEach(starfield => { starfield.style.transform = ''; }));
+  };
+
+  buildStarfields();
 
   // Legacy canvas particles are optional; the hero now uses the CSS starfield.
   const canvas = document.querySelector('.hero-particles');
@@ -138,52 +152,91 @@ window.addEventListener('load', () => {
   if (!window.gsap || !window.ScrollTrigger) return;
   gsap.registerPlugin(ScrollTrigger);
 
-  const preloader = document.querySelector('.preloader');
-  const counter = { value: 0 };
-  const introGate = document.querySelector('.intro-gate');
-  const introSkipButton = document.querySelector('.intro-gate__skip');
+  const INTRO_SEEN_KEY = 'waliliens-intro-seen';
+  const readIntroSeen = () => {
+    try { return window.sessionStorage.getItem(INTRO_SEEN_KEY) === 'true'; } catch (error) { return false; }
+  };
+
+  const revealHeader = () => {
+    const header = document.querySelector('.site-header');
+    if (!header) return;
+    // The intro tweens autoAlpha/pointerEvents on .site-header, so clear GSAP's
+    // inline values before re-asserting the resting state.
+    gsap.set(header, { clearProps: 'opacity,visibility,pointerEvents' });
+    header.style.setProperty('opacity', '1');
+    header.style.setProperty('pointer-events', 'auto');
+  };
+
   let introTimeline = null;
-  let introAlreadySeen = false;
-  try {
-    introAlreadySeen = window.sessionStorage.getItem('waliliens-intro-seen') === 'true';
-  } catch (error) {
-    introAlreadySeen = false;
-  }
-  const introShouldPlay = !introAlreadySeen && !reducedMotion && !!(introGate && preloader);
+
   const finishIntro = () => {
-    try { window.sessionStorage.setItem('waliliens-intro-seen', 'true'); } catch (error) {}
-    introGate?.classList.add('is-hidden');
-    preloader?.classList.add('is-hidden');
-    document.querySelector('.site-header')?.style.setProperty('opacity', '1');
-    document.querySelector('.site-header')?.style.setProperty('pointer-events', 'auto');
+    try { window.sessionStorage.setItem(INTRO_SEEN_KEY, 'true'); } catch (error) {}
+    document.querySelector('.intro-gate')?.classList.add('is-hidden');
+    document.querySelector('.preloader')?.classList.add('is-hidden');
+    revealHeader();
     ScrollTrigger.refresh();
   };
 
-  if (introSkipButton) {
-    introSkipButton.addEventListener('click', () => {
-      if (introTimeline) introTimeline.kill();
-      finishIntro();
-    });
-  }
+  // Reusable so the header logo can replay the intro in place. Elements are
+  // queried per call because PJAX can swap <main> (and its gate) underneath us.
+  // `paused: true` applies the initial-state reset synchronously but holds the
+  // motion, so a caller can reveal the gate first and start it afterwards.
+  const playIntro = ({ paused = false } = {}) => {
+    const introGate = document.querySelector('.intro-gate');
+    if (!introGate || reducedMotion) return null;
+    const preloader = document.querySelector('.preloader');
 
-  if (!introShouldPlay) {
-    if (preloader) preloader.classList.add('is-hidden');
-    introGate?.classList.add('is-hidden');
-    document.querySelector('.site-header')?.style.setProperty('opacity', '1');
-    document.querySelector('.site-header')?.style.setProperty('pointer-events', 'auto');
-    ScrollTrigger.refresh();
-  } else {
-    introTimeline = gsap.timeline();
-    gsap.from('.intro-gate__caption', { y: 10, opacity: 0, duration: .45, delay: .15, ease: 'power3.out' });
+    if (introTimeline) {
+      introTimeline.kill();
+      introTimeline = null;
+    }
+    try { window.sessionStorage.removeItem(INTRO_SEEN_KEY); } catch (error) {}
+
+    // Undo both the class and the inline styles finishIntro/the timeline left
+    // behind (autoAlpha + scale on the gate, xPercent on the door masks).
+    introGate.classList.remove('is-hidden');
+    gsap.set(introGate, { clearProps: 'all' });
+    gsap.set(introGate, { autoAlpha: 1, scale: 1, transformOrigin: '50% 50%' });
+    const doorMasks = '.intro-gate__door-mask--left, .intro-gate__door-mask--right';
+    gsap.set(doorMasks, { clearProps: 'all' });
+    gsap.set(doorMasks, { xPercent: 0 });
+    gsap.set('.intro-gate__caption', { clearProps: 'all' });
+
+    const counter = { value: 0 };
+    const counterTarget = document.querySelector('.preloader__counter span');
+    if (preloader) {
+      preloader.classList.remove('is-hidden');
+      gsap.set(preloader, { clearProps: 'all' });
+      gsap.set(preloader, { autoAlpha: 1, yPercent: 0 });
+      gsap.set('.preloader__logo, .preloader__wordmark, .preloader__counter', { clearProps: 'all' });
+      if (counterTarget) counterTarget.textContent = '0';
+    }
+
+    // Hide the header for the replay: the
+    // body:has(.intro-gate:not(.is-hidden)) rule cannot beat inline styles.
+    const header = document.querySelector('.site-header');
+    if (header) gsap.set(header, { autoAlpha: 0, pointerEvents: 'none' });
+
+    introTimeline = gsap.timeline({ paused });
+    // Runs alongside the timeline rather than inside it, so it has to be held
+    // back too when the caller wants a paused reset.
+    const captionTween = gsap.from('.intro-gate__caption', { y: 10, opacity: 0, duration: .45, delay: .15, ease: 'power3.out', paused });
+    if (paused) introTimeline.eventCallback('onStart', () => captionTween.play());
+
+    // A gate that arrived through PJAX has no preloader, so that leg is optional.
+    if (preloader) {
+      introTimeline
+        .from('.preloader__logo', { scale: .7, opacity: 0, duration: .3, ease: 'back.out(1.8)' })
+        .from('.preloader__wordmark, .preloader__counter', { y: 10, opacity: 0, duration: .24, stagger: .05 }, '-=.08')
+        .to(counter, { value: 100, duration: .55, ease: 'power2.inOut', onUpdate: () => { if (counterTarget) counterTarget.textContent = Math.round(counter.value); } }, '-=.07')
+        .to(preloader, { autoAlpha: 0, yPercent: -100, duration: .5, ease: 'power4.inOut', onComplete: () => preloader.classList.add('is-hidden') })
+        .to({}, { duration: .2 });
+    }
+
     introTimeline
-      .from('.preloader__logo', { scale: .7, opacity: 0, duration: .3, ease: 'back.out(1.8)' })
-      .from('.preloader__wordmark, .preloader__counter', { y: 10, opacity: 0, duration: .24, stagger: .05 }, '-=.08')
-      .to(counter, { value: 100, duration: .55, ease: 'power2.inOut', onUpdate: () => { document.querySelector('.preloader__counter span').textContent = Math.round(counter.value); } }, '-=.07')
-      .to(preloader, { autoAlpha: 0, yPercent: -100, duration: .5, ease: 'power4.inOut', onComplete: () => preloader.classList.add('is-hidden') })
-      .to({}, { duration: .2 })
       .to('.intro-gate__door-mask--left', { xPercent: -100, duration: .7, ease: 'power4.inOut' })
       .to('.intro-gate__door-mask--right', { xPercent: 100, duration: .7, ease: 'power4.inOut' }, '<')
-      .to('.intro-gate', {
+      .to(introGate, {
         autoAlpha: 0,
         scale: .96,
         duration: .55,
@@ -195,6 +248,29 @@ window.addEventListener('load', () => {
       .from('.hero__eyebrow', { y: 20, opacity: 0, duration: .35, ease: 'power3.out' }, '-=.12')
       .from('.hero-title__word', { yPercent: 115, rotate: 3, opacity: 0, duration: .5, stagger: .08, ease: 'power4.out' }, '-=.15')
       .from('.hero__copy, .hero__bottom', { y: 28, opacity: 0, duration: .4, stagger: .08, ease: 'power3.out' }, '-=.2');
+
+    return introTimeline;
+  };
+
+  // The skip button lives inside the gate, so delegate from the document: this
+  // keeps working for a gate that arrived through a PJAX swap.
+  document.addEventListener('click', event => {
+    if (!event.target.closest('.intro-gate__skip')) return;
+    if (introTimeline) introTimeline.kill();
+    finishIntro();
+  });
+
+  const introGateAtLoad = document.querySelector('.intro-gate');
+  const preloaderAtLoad = document.querySelector('.preloader');
+  const introShouldPlay = !readIntroSeen() && !!(introGateAtLoad && preloaderAtLoad);
+
+  if (!introShouldPlay) {
+    preloaderAtLoad?.classList.add('is-hidden');
+    introGateAtLoad?.classList.add('is-hidden');
+    revealHeader();
+    ScrollTrigger.refresh();
+  } else {
+    playIntro();
   }
 
   const initPageAnimations = () => {
@@ -251,7 +327,17 @@ window.addEventListener('load', () => {
   window.WaliliensAnimations = {
     refreshPage: () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // A swapped <main> can bring in empty decoration hosts (the home gate's
+      // starfield, the hero globe), so repopulate before measuring triggers.
+      buildGlobeDots();
+      buildStarfields();
       initPageAnimations();
+    },
+    // Used by the header logo to replay the gate; returns null when there is no
+    // gate in the document or the visitor prefers reduced motion.
+    playIntro,
+    clearIntroSeen: () => {
+      try { window.sessionStorage.removeItem(INTRO_SEEN_KEY); } catch (error) {}
     }
   };
   initPageAnimations();

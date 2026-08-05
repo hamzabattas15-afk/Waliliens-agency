@@ -4,8 +4,20 @@
  * Each page must expose its swappable content inside a <main> element.
  */
 document.addEventListener('DOMContentLoaded', () => {
-  // Stop gracefully if GSAP is unavailable; ordinary links will still work.
-  if (!window.gsap) return;
+  const isHomeDocument = url =>
+    new URL(url, window.location.href).pathname === new URL('index.html', window.location.href).pathname;
+
+  // Stop gracefully if GSAP is unavailable; ordinary links still work. There is
+  // no intro to replay in that case, so the header logo only needs to clear the
+  // seen flag and let the browser navigate home on its own.
+  if (!window.gsap) {
+    document.addEventListener('click', event => {
+      const logo = event.target.closest('.site-header .logo');
+      if (!logo) return;
+      try { window.sessionStorage.removeItem('waliliens-intro-seen'); } catch (error) {}
+    });
+    return;
+  }
 
   // 1. Create the full-screen navy panel used as the transition wipe.
   const wipe = document.createElement('div');
@@ -100,17 +112,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // The intro animation only runs on a real page load. Remove only the
-  // incoming home gate during PJAX so it cannot cover the swapped content.
-  const preparePjaxMain = main => {
+  // The intro animation only runs on a real page load, so the incoming home gate
+  // is normally stripped during PJAX to keep it from covering the swapped
+  // content. When the visitor asked for a replay (header logo) we keep the gate
+  // and leave the seen flag alone so the intro can run after the swap.
+  const preparePjaxMain = (main, replayIntro) => {
     const introGate = main.querySelector('#intro-gate.intro-gate');
-    if (!introGate) return;
+    if (!introGate || replayIntro) return;
     introGate.remove();
     try { window.sessionStorage.setItem('waliliens-intro-seen', 'true'); } catch (error) {}
   };
 
   // 4. Run a cover → swap → reveal timeline, then update browser history.
-  const navigate = async (url, pushState = true) => {
+  const navigate = async (url, pushState = true, { replayIntro = false } = {}) => {
     if (isTransitioning) return;
     isTransitioning = true;
     const currentMain = document.querySelector('main');
@@ -122,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Make target CSS and body-scoped styles available before the new main is visible.
       await syncStylesheets(documentNext);
-      preparePjaxMain(mainNext);
+      preparePjaxMain(mainNext, replayIntro);
       currentMain.replaceWith(mainNext);
       document.body.className = documentNext.body.className;
       document.title = title;
@@ -136,9 +150,24 @@ document.addEventListener('DOMContentLoaded', () => {
       document.dispatchEvent(new CustomEvent('waliliens:pjax'));
       window.WaliliensAnimations?.refreshPage?.();
 
+      // Stage the gate in its initial state while the wipe still covers the
+      // page, so the reveal uncovers a full gate rather than a half-played one.
+      const introReplay = replayIntro
+        ? window.WaliliensAnimations?.playIntro?.({ paused: true }) ?? null
+        : null;
+
+      // We kept the incoming gate for a replay that turned out to be impossible
+      // (reduced motion, animations.js absent). Strip it now, exactly as the
+      // normal PJAX path would, so it cannot sit over the page forever.
+      if (replayIntro && !introReplay) {
+        document.querySelector('#intro-gate.intro-gate')?.remove();
+        try { window.sessionStorage.setItem('waliliens-intro-seen', 'true'); } catch (error) {}
+      }
+
       // Reveal the new page by moving the panel off the top of the viewport.
       await gsap.to(wipe, { yPercent: -100, duration: .7, ease: 'power4.inOut' });
       gsap.set(wipe, { yPercent: 100 });
+      introReplay?.play();
     } catch (error) {
       // If fetch/parsing fails, use a normal navigation so the visitor is never trapped.
       window.location.assign(url);
@@ -149,8 +178,39 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // 5. Intercept clicks on index.html, about.html, portfolio.html, and contact.html links.
+  //    The header logo is checked first: it always goes home AND replays the intro
+  //    gate, so it must not fall through to the plain-navigation branch.
   document.addEventListener('click', event => {
     const link = event.target.closest('a[href]');
+    if (!link) return;
+
+    if (link.closest('.site-header') && link.matches('.logo')) {
+      // Modifier-clicks and middle-clicks keep their native meaning (new tab).
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target === '_blank') return;
+      event.preventDefault();
+      if (isTransitioning) return;
+
+      // Same document (index.html vs index.html, or "/" vs "/") means replay in
+      // place; anything else is a real navigation home.
+      const target = new URL(link.href, window.location.href);
+      if (target.pathname === window.location.pathname) {
+        // Already home: replay the gate in place.
+        window.scrollTo(0, 0);
+        // Under reduced motion there is no intro to replay at all (animations.js
+        // returns before building one), so scrolling to the top is the whole job.
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        // Otherwise fall back to a real reload if the timeline is unavailable for
+        // any reason (gate missing, animations.js not initialised).
+        if (!window.WaliliensAnimations?.playIntro?.()) {
+          try { window.sessionStorage.removeItem('waliliens-intro-seen'); } catch (error) {}
+          window.location.assign(target.href);
+        }
+        return;
+      }
+      navigate(target.href, true, { replayIntro: true });
+      return;
+    }
+
     if (!isTransitionLink(link, event)) return;
     event.preventDefault();
     navigate(new URL(link.href, window.location.href).href);
