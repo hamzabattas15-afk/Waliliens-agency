@@ -23,13 +23,9 @@ async function submitForm(data) {
   return resData;
 }
 
-// Runs on a full page load and again after every PJAX swap; the dataset flag
-// lives on the <form> itself, so a freshly swapped-in <main> is always bound
-// exactly once and a repeat call on the same DOM is a no-op.
 function initContactPage() {
   const form = document.querySelector('#contact-form');
-  if (!form || form.dataset.contactBound === 'true') return;
-  form.dataset.contactBound = 'true';
+  if (!form) return;
 
   // The widget carries no site key in the markup (render=explicit mode), so it
   // only renders when a key is actually configured — otherwise Turnstile stays
@@ -74,11 +70,4 @@ function initContactPage() {
   });
 }
 
-// When this file is injected by a PJAX swap, DOMContentLoaded has already
-// fired and never will again — initialise immediately in that case.
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initContactPage);
-} else {
-  initContactPage();
-}
-document.addEventListener('waliliens:pjax', initContactPage);
+document.addEventListener('DOMContentLoaded', initContactPage);

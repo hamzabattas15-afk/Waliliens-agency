@@ -1,16 +1,4 @@
-/* Waliliens - Services Page */
-
-.services-page {
-  background: #070811;
-}
-
-.services-page .site-header {
-  border-color: rgba(94, 234, 212, 0.12);
-}
-
-.services-page .nav-links a[aria-current="page"] {
-  color: var(--cyan-accent);
-}
+/* Waliliens - Services section */
 
 .services-hero {
   position: relative;
