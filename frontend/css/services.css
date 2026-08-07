@@ -160,15 +160,22 @@
 
 .service-detail__list article {
   display: grid;
-  grid-template-columns: 48px 0.8fr 1.2fr;
+  grid-template-columns: 0.8fr 1.2fr;
   gap: 22px;
   padding: 28px 0;
   border-bottom: 1px solid var(--line);
 }
 
+.service-detail__header {
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+}
+
 .service-detail__list span {
   color: var(--cyan-accent);
   font: 600 12px "Space Grotesk", sans-serif;
+  flex-shrink: 0;
 }
 
 .service-detail__list h3 {
@@ -258,12 +265,12 @@
   }
 
   .service-detail__list article {
-    grid-template-columns: 42px 1fr;
-    gap: 14px;
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .service-detail__list p {
-    grid-column: 1 / -1;
+  .service-detail__header {
+    gap: 14px;
   }
 }
 

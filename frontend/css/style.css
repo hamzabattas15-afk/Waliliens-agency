@@ -263,6 +263,10 @@ h3,
 .footer a:hover {
   color: var(--cyan-accent);
 }
+.nav-links a[aria-current="page"],
+.footer__legal-links a[aria-current="page"] {
+  color: var(--cyan-accent);
+}
 .button {
   display: inline-flex;
   align-items: center;
